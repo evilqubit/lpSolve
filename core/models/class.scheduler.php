@@ -24,7 +24,8 @@ class Scheduler
   private $students_schedule_json_path = 'students_schedule.json';
   private $students_schedule_count_json_path = 'students_schedule_count.json';
   private $teachers_schedule_json_path = 'schedule-teachers.json';
-  private $python_exec_path = 'C:\PYTHON33\python.exe';
+  // private $python_exec_path = 'C:\PYTHON33\python.exe';
+  private $python_exec_path = 'python';
   private $python_script_path = 'python-script.py';
   
   public $day_starting_time = '09:00'; // 9 AM
@@ -294,12 +295,12 @@ class Scheduler
     clearstatcache();
     
     // check if python executable and python scipts exist on server
-    if (!file_exists($this->python_exec_path)) {
-      exit("The python executable '$this->python_exec_path' does not exist");
-    }
-    if (!is_executable($this->python_exec_path)) {
-      exit(("The python executable '$this->python_exec_path' is not executable"));
-    }
+    // if (!file_exists($this->python_exec_path)) {
+      // exit("The python executable '$this->python_exec_path' does not exist");
+    // }
+    // if (!is_executable($this->python_exec_path)) {
+      // exit(("The python executable '$this->python_exec_path' is not executable"));
+    // }
     if (!file_exists($this->python_script_path)) {
       exit("The python script file '$this->python_script_path' does not exist");
     }
@@ -334,7 +335,7 @@ class Scheduler
   function saveStudentsScheduleToJSON(){
     try{
       $fp = fopen( $this->students_schedule_json_path, 'w');
-      fwrite ($fp, json_encode($this->students_schedule) );
+      $res = fwrite ($fp, json_encode($this->students_schedule) );
       fclose ($fp);
     }
     catch (Exception $e) {}
