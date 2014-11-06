@@ -8,5 +8,5 @@ Click the Generate random schedule button to generate a student schedule and cal
 
 ## Contributors
 
-Elie El Khoury | elie808.k@gmail.com
+Elie El Khoury | elie808.k@gmail.com<br>
 Patrick Saad | patrick.saad.cs@gmail.com
