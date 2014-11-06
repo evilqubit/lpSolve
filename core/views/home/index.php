@@ -1,6 +1,6 @@
 <?php
 function createKidLabel ($data){
-  $output = "<div class='label label-primary ui-widget-header draggable' data-name='".strtolower($data['name'])."' data-id='$data[id]'>$data[name] | id $data[id]";
+  $output = "<div class='label label-primary ui-widget-header draggable' data-name='".strtolower($data['name'])."' data-id='$data[id]'>$data[name] #$data[id]";
   $output .= "<span class='close-me'>X</span></div>";
   
   if ( isset ($data['__return_']) )
