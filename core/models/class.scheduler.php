@@ -23,7 +23,7 @@ class Scheduler
   
   private $students_schedule_json_path = 'students_schedule.json';
   private $students_schedule_count_json_path = 'students_schedule_count.json';
-  private $teachers_schedule_json_path = 'schedule-teachers.json';
+  private $teachers_schedule_json_path = 'teachers_schedule.json';
   // private $python_exec_path = 'C:\PYTHON33\python.exe';
   private $python_exec_path = 'python';
   private $python_script_path = 'python-script.py';
