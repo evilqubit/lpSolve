@@ -98,6 +98,10 @@ class Scheduler
   * 
   */
   function createEmptyTeachersSchedule (){
+    
+    // empty teachers schedule first
+    $this->teachers_schedule = array();
+    
     for ($x = 1; $x <= 7; $x++ ){
       $this->teachers_schedule['Days'][($x-1)] = array(
         'Slots' => array()
