@@ -1,7 +1,15 @@
 <?php
+// function createKidLabel ($data){
+  // $output = "<div class='label label-primary ui-widget-header draggable' data-name='".strtolower($data['name'])."' data-id='$data[id]'>$data[name] #$data[id]";
+  // $output .= "<span class='close-me'>X</span></div>";
+  
+  // if ( isset ($data['__return_']) )
+    // return $output;
+  // else
+    // echo $output;
+// }
 function createKidLabel ($data){
-  $output = "<div class='label label-primary ui-widget-header draggable' data-name='".strtolower($data['name'])."' data-id='$data[id]'>$data[name] #$data[id]";
-  $output .= "<span class='close-me'>X</span></div>";
+  $output = "<div class='label label-primary'>$data[name] #$data[id]</div>";
   
   if ( isset ($data['__return_']) )
     return $output;
@@ -72,12 +80,9 @@ function createKidLabel ($data){
                         $csv_ids .= $student_data['id'].',';
                         // cant add same student to the same slot
                         // if by mistake we add the student twice to the same time slot
-                        if ( !isset ( $students_ids[ $student_data['id'] ] ) )
-                        {
-                          $student_data['__return_'] = 1;
-                          $student_text .= createKidLabel ($student_data, 'return');
-                          $students_ids[$student_data['id']] = $student_data['id'];
-                        }
+                        $student_data['__return_'] = 1;
+                        $student_text .= createKidLabel ($student_data, 'return');
+                        $students_ids[$student_data['id']] = $student_data['id'];
                       }
                       $csv_ids = rtrim ($csv_ids, ',');
                       ?>
