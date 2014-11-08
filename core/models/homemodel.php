@@ -10,7 +10,7 @@ class HomeModel
   }
 
   public function index(){
-    include ('class.scheduler.php');
+    include ('classes/scheduler.php');
     $scheduler = new Scheduler();
     return $scheduler;
     

@@ -76,13 +76,13 @@ class Scheduler
   * 
   */
   function setRealPaths (){
-    $this->students_schedule_json_path = realpath(dirname(dirname(dirname(__FILE__)))).'/'.$this->json_main_folder_name.'/'.$this->students_schedule_json_path;
+    $this->students_schedule_json_path = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->students_schedule_json_path;
     
-    $this->students_schedule_count_json_path = realpath(dirname(dirname(dirname(__FILE__)))).'/'.$this->json_main_folder_name.'/'.$this->students_schedule_count_json_path;
+    $this->students_schedule_count_json_path = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->students_schedule_count_json_path;
     
-    $this->teachers_schedule_json_path = realpath(dirname(dirname(dirname(__FILE__)))).'/'.$this->json_main_folder_name.'/'.$this->teachers_schedule_json_path;
+    $this->teachers_schedule_json_path = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->teachers_schedule_json_path;
     
-    $this->python_script_path = realpath(dirname(__FILE__)).'/'.$this->python_main_folder_name.'/'.$this->python_script_path;
+    $this->python_script_path = realpath(dirname(dirname(__FILE__))).'/'.$this->python_main_folder_name.'/'.$this->python_script_path;
   }// end function
   
   function getDayStartingTime(){
