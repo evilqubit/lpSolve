@@ -1,3 +1,4 @@
+
 ## Description
 
 Scheduler web app using PHP and Python.
@@ -10,3 +11,4 @@ Click the Generate random schedule button to generate a student schedule and cal
 
 Elie El Khoury | elie808.k at gmail<br>
 Patrick Saad | patrick.saad.cs at gmail
+
