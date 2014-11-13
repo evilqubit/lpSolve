@@ -1,5 +1,5 @@
 <?php
-class HomeModel
+class SettingsModel
 {
 	function __construct($db) {
 		try {
@@ -12,16 +12,7 @@ class HomeModel
 	public function index(){
 		include ('classes/scheduler.php');
 		$scheduler = new Scheduler();
-		$scheduler->kickstart();
+		$scheduler->saveSettings();
 		return $scheduler;
-		
-		// $sql = 'SELECT * FROM about';
-		// $query = $this->db->prepare($sql);
-		// $query->execute();
-		
-		// return ( $query->rowCount() > 1 ) ? $query->fetchAll() : $query->fetch();
-	}
-		
-	public function test($args=array()){
 	}
 }

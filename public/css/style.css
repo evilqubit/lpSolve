@@ -98,6 +98,7 @@ table {
 table .label { 
   display: block;
   margin-bottom: 5px;
+	width: 82%;
   margin-right: 0;
   position: relative;
   border-radius: 0
@@ -109,15 +110,16 @@ table .label {
 }
 .table tbody>tr>td, .table tbody>tr>th, .table tfoot>tr>td, .table tfoot>tr>th, .table thead>tr>td, .table thead>tr>th{padding:5px;}
 .table thead>tr>th { vertical-align: middle; }
-.all-kids .label { cursor: pointer; position: relative; z-index: 999999999 }
+.all-kids .label { cursor: pointer; position: relative; z-index: 999999999; display: inline-block; margin-bottom: 10px }
 .all-kids .close-me { display: none }
 
-.close-me { display: none }
+.close-me { }
 
 table .label.teacher_count  { 
   padding: 5px;
   display: block;
-  margin-top: 10px
+  margin-top: 10px;
+	width: 100%
 }
 
 .ui-state-error { background: #d9534f }
@@ -142,7 +144,7 @@ table .label.teacher_count  {
   right: -22px;
   background: #d9534f;
   padding: 7px;
-  
+  height: 100%;
 }
 .close-me:hover { background: #A13936 }
 .tooltip-inner {
@@ -154,15 +156,14 @@ i.link {
 
 /* Nav */
 .nav {
-  margin-top: 3px
 }
 .navbar-default .navbar-nav>li>a, .navbar-default .navbar-text{
-  font-size: 15px;
+  font-size: 14px;
   text-transform: uppercase;
   font-weight: bold;
   padding-right: 5px;
   padding-left: 5px;
-  margin-right: 25px;
+  margin-right: 10px;
   color: #58595B;
 }
 .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-text:hover{

@@ -2,17 +2,28 @@ var dragCheck = false;
 
 $(function() {
   
+	$('.timeSlotPicker').datetimepicker({
+		 timepicker: true,
+		 datepicker: false,
+		 format:'H:i'
+	});
+	
   $("#save_schedule").click (function(){
     $("input[name='save_schedule']").val("1");
     $("#hidden_form").submit();
   });
-  
-  $('#search_kids').on( "keyup", function() {
-    var input = $(this).val();
-    $(".all-kids .label").show();
-    if ( input != '' )
-      $(".all-kids .label").not("[data-name*="+ input +"]").hide();
+	
+	$("#random_schedule").click (function(){
+    $("input[name='random_schedule']").val("1");
+    $("#hidden_form").submit();
   });
+  
+  // $('#search_kids').on( "keyup", function() {
+    // var input = $(this).val();
+    // $(".all-kids .label").show();
+    // if ( input != '' )
+      // $(".all-kids .label").not("[data-name*="+ input +"]").hide();
+  // });
   
   $( ".draggable" ).draggable({
     prependTo: "body",

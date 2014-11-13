@@ -1,41 +1,44 @@
 <?php
-// function createKidLabel ($data){
-  // $output = "<div class='label label-primary ui-widget-header draggable' data-name='".strtolower($data['name'])."' data-id='$data[id]'>$data[name] #$data[id]";
-  // $output .= "<span class='close-me'>X</span></div>";
-  
-  // if ( isset ($data['__return_']) )
-    // return $output;
-  // else
-    // echo $output;
-// }
 function createKidLabel ($data){
-  $output = "<div class='label label-primary'>$data[name] #$data[id]</div>";
+  $output = "<div class='label label-primary ui-widget-header draggable' data-name='".strtolower($data['name'])."' data-id='$data[id]'>$data[name] #$data[id]";
+  $output .= "<span class='close-me'>X</span></div>";
   
   if ( isset ($data['__return_']) )
     return $output;
   else
     echo $output;
 }
+/* function createKidLabel ($data){
+  $output = "<div class='label label-primary'>$data[name] #$data[id]</div>";
+  
+  if ( isset ($data['__return_']) )
+    return $output;
+  else
+    echo $output;
+} */
 ?>
 <section class="block">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         
-        <!--<h3>Kids</h3>-->
+        <h3>Kids</h3>
+			 <p>Drag & Drop kids into the calendar and Recalculate the schedule!</p>
         
         <div class="all-kids">
           <?php
-            /* foreach ($home_data->kids as $kid ){
-              createKidLabel ( $kid );
-            } */
+            foreach ($home_data->kids as $kid ){
+						createKidLabel ( $kid );
+            }
           ?>
         </div>
                               
         <form id="hidden_form" method="POST" action="">
           <br>
           <button class="btn btn-success" type="submit" id="random_schedule">Create Random Schedule</button>
-          <input type="hidden" name="create_schedule" value="1">
+					<button class="btn btn-success" type="submit" id="save_schedule">Recalculate Schedule</button>
+          <input type="hidden" name="random_schedule" value="0">
+					<input type="hidden" name="save_schedule" value="0">
           
           <table class="table table-bordered">
             <thead>
@@ -53,7 +56,7 @@ function createKidLabel ($data){
             <tbody>
               <?php
               // starting slot time
-              $old_slot_time = $home_data->day_starting_time;
+              $old_slot_time = $home_data->settings['day_starting_time'];
               
               // iterate through all time Slots
               for ( $i = 1; $i <= $home_data->slot_total_count; $i++){
