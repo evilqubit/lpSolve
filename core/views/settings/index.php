@@ -35,6 +35,14 @@
 						<label>Max kids per teacher</label>
 						<input class="form-control" name="max_kids_per_teacher" type="text" value="<?php echo $settings_data->settings['max_kids_per_teacher'];?>">
 					</div>
+					<div class="form-group">
+						<label>Fulltime available teachers</label>
+						<input class="form-control" name="fulltime_available_teachers" type="text" value="<?php echo $settings_data->settings['fulltime_available_teachers'];?>">
+					</div>
+					<div class="form-group">
+						<label>Parttime available teachers</label>
+						<input class="form-control" name="parttime_available_teachers" type="text" value="<?php echo $settings_data->settings['parttime_available_teachers'];?>">
+					</div>
 				</form>
 					
 			</div><!-- col-md-12-->

@@ -55,6 +55,8 @@ class Scheduler
   public $day_ending_time_default = '19:00'; // 7 PM
   public $day_slot_time_default = 30; // 30 mins
 	public $max_kids_per_teacher_default = 5;
+	public $fulltime_available_teachers_default = 69;
+	public $parttime_available_teachers_default = 69;
   public $slot_total_count = '';
 	
 	public $returnData = array();
@@ -89,6 +91,10 @@ class Scheduler
 			$this->settings['day_ending_time'] = ( isset ($settings_json['day_ending_time']) && !empty ($settings_json['day_ending_time'] ) ) ? $settings_json['day_ending_time'] : $this->day_ending_time_default;
 			$this->settings['day_slot_time'] = ( isset ($settings_json['day_slot_time']) && !empty ($settings_json['day_slot_time'] ) && is_numeric ($settings_json['day_slot_time']) && $settings_json['day_slot_time'] >= 30 ) ? $settings_json['day_slot_time'] : $this->day_slot_time_default;
 			$this->settings['max_kids_per_teacher'] = ( isset ($settings_json['max_kids_per_teacher']) && !empty ($settings_json['max_kids_per_teacher'] ) && is_numeric ($settings_json['max_kids_per_teacher']) && $settings_json['max_kids_per_teacher'] > 0 ) ? $settings_json['max_kids_per_teacher'] : $this->max_kids_per_teacher_default;
+			
+			$this->settings['fulltime_available_teachers'] =  ( $settings_json['fulltime_available_teachers'] && is_numeric ($settings_json['fulltime_available_teachers']) && $settings_json['fulltime_available_teachers'] > 0 ) ? $settings_json['fulltime_available_teachers'] : $this->fulltime_available_teachers_default;
+			
+			$this->settings['parttime_available_teachers'] =  ($settings_json['parttime_available_teachers'] && is_numeric ($settings_json['parttime_available_teachers']) && $settings_json['parttime_available_teachers'] > 0 ) ? $settings_json['parttime_available_teachers'] : $this->parttime_available_teachers_default;
 		}
 		else{
 			// defaults
@@ -96,6 +102,8 @@ class Scheduler
 			$this->settings['day_ending_time'] = $this->day_ending_time_default;
 			$this->settings['day_slot_time'] = $this->day_slot_time_default;
 			$this->settings['max_kids_per_teacher'] = $this->max_kids_per_teacher_default;
+			$this->settings['fulltime_available_teachers'] = $this->fulltime_available_teachers_default;
+			$this->settings['parttime_available_teachers'] = $this->parttime_available_teachers_default;
 			
 			$this->saveSettingsToJSON();
 		}
@@ -108,6 +116,10 @@ class Scheduler
 			$this->settings['day_ending_time'] = ( isset ($_POST['day_ending_time']) && !empty ($_POST['day_ending_time'] ) ) ? $_POST['day_ending_time'] : $this->day_ending_time_default;
 			$this->settings['day_slot_time'] = ( isset ($_POST['day_slot_time']) && !empty ($_POST['day_slot_time'] ) && is_numeric ($_POST['day_slot_time']) && $_POST['day_slot_time'] >= 30 ) ? $_POST['day_slot_time'] : $this->day_slot_time_default;
 			$this->settings['max_kids_per_teacher'] = ( isset ($_POST['max_kids_per_teacher']) && !empty ($_POST['max_kids_per_teacher'] ) && is_numeric ($_POST['max_kids_per_teacher']) && $_POST['max_kids_per_teacher'] > 0 ) ? $_POST['max_kids_per_teacher'] : $this->max_kids_per_teacher_default;
+			
+			$this->settings['fulltime_available_teachers'] = ( isset ($_POST['fulltime_available_teachers']) && !empty ($_POST['fulltime_available_teachers'] ) && is_numeric ($_POST['fulltime_available_teachers']) && $_POST['fulltime_available_teachers'] > 0 ) ? $_POST['fulltime_available_teachers'] : $this->fulltime_available_teachers_default;
+			
+			$this->settings['parttime_available_teachers'] = ( isset ($_POST['parttime_available_teachers']) && !empty ($_POST['parttime_available_teachers'] ) && is_numeric ($_POST['parttime_available_teachers']) && $_POST['parttime_available_teachers'] > 0 ) ? $_POST['parttime_available_teachers'] : $this->parttime_available_teachers_default;
 			
 			$this->returnData['message'] = 'Settings saved.';
 			
