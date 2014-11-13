@@ -36,7 +36,7 @@
       <div class="collapse navbar-collapse navbar-left menu-navbar-collapse">
         <ul class="nav navbar-nav">
           <li class="<?php echo $_Settings['menu_selected']['home'];?>"><a href="./">Home</a></li>
-				<!--<li class="<?php echo $_Settings['menu_selected']['settings'];?>"><a href="settings">Settings</a></li>-->
+				<li class="<?php echo $_Settings['menu_selected']['settings'];?>"><a href="settings">Settings</a></li>
         </ul>
       </div>
     </div>
