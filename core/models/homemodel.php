@@ -1,4 +1,6 @@
 <?php
+use \Core\Models\Classes\Scheduler;
+
 class HomeModel
 {
 	function __construct($db) {
@@ -11,7 +13,7 @@ class HomeModel
 
 	public function index(){
 		include ('classes/scheduler.php');
-		$scheduler = new Scheduler();
+		$scheduler = new Scheduler;
 		$scheduler->kickstart();
 		return $scheduler;
 		

@@ -19,6 +19,7 @@
 					<br>
 					<button class="btn btn-success" type="submit" id="save_settings">Save Settings</button>
 					<br><br>
+					<!--
 					<div class="form-group">
 						<label>Starting Hour</label>
 						<input class="form-control timeSlotPicker" name="day_starting_time" type="text" value="<?php echo $settings_data->settings['day_starting_time'];?>">
@@ -31,6 +32,7 @@
 						<label>Slot Time (in minutes)</label>
 						<input class="form-control" name="day_slot_time" type="text" value="<?php echo $settings_data->settings['day_slot_time'];?>">
 					</div>
+					-->
 					<div class="form-group">
 						<label>Max kids per teacher</label>
 						<input class="form-control" name="max_kids_per_teacher" type="text" value="<?php echo $settings_data->settings['max_kids_per_teacher'];?>">

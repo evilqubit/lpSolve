@@ -1,4 +1,6 @@
 <?php
+use \Core\Models\Classes\Scheduler;
+
 class SettingsModel
 {
 	function __construct($db) {
@@ -11,7 +13,7 @@ class SettingsModel
 
 	public function index(){
 		include ('classes/scheduler.php');
-		$scheduler = new Scheduler();
+		$scheduler = new Scheduler;
 		$scheduler->saveSettings();
 		return $scheduler;
 	}

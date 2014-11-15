@@ -21,10 +21,15 @@ import sys
 # scalemode: Autoscale flag. Off when 0 or omitted.
 # setminim: Set maximum lp when this flag equals 0 or omitted.
 
+#Parse JSON settings from file
+json_settings = open('zejsonfiles/settings.json')
+settings_data = json.load(json_settings)
+json_settings.close()
+
 #Constants
-fullTimersAvailable = 69
-partTimersAvailable = 69
-studentsPerTeacher = 5
+fullTimersAvailable = settings_data["fulltime_available_teachers"]
+partTimersAvailable = settings_data["parttime_available_teachers"]
+studentsPerTeacher = settings_data["max_kids_per_teacher"]
 
 #Cost coeficients
 FULL = 100
