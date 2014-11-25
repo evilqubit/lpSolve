@@ -2,6 +2,22 @@ var dragCheck = false;
 
 $(function() {
   
+	$("#toggle_students").click(function(){
+		// Toggle all students in one slot
+		//$(this).parent().find(".student-entry").toggle();
+		
+		// Toggle All students in all slots
+		if ($(this).hasClass("hide_me") )
+			$(this).removeClass("hide_me")
+		else
+			$(this).addClass("hide_me")
+			
+		var text = ( $(this).hasClass("hide_me") ) ? "Show Students" : "Hide Students";
+		$(this).html(text);
+		$("#hidden_form .student-entry").toggle();
+		return false;
+	});
+	
 	$('.timeSlotPicker').datetimepicker({
 		 timepicker: true,
 		 datepicker: false,

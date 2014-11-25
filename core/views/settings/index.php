@@ -19,7 +19,6 @@
 					<br>
 					<button class="btn btn-success" type="submit" id="save_settings">Save Settings</button>
 					<br><br>
-					<!--
 					<div class="form-group">
 						<label>Starting Hour</label>
 						<input class="form-control timeSlotPicker" name="day_starting_time" type="text" value="<?php echo $settings_data->settings['day_starting_time'];?>">
@@ -28,6 +27,7 @@
 						<label>Ending Hour</label>
 						<input class="form-control timeSlotPicker" name="day_ending_time" type="text" value="<?php echo $settings_data->settings['day_ending_time'];?>">
 					</div>
+					<!--
 					<div class="form-group">
 						<label>Slot Time (in minutes)</label>
 						<input class="form-control" name="day_slot_time" type="text" value="<?php echo $settings_data->settings['day_slot_time'];?>">

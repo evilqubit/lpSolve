@@ -53,6 +53,7 @@ class Scheduler
 	private $python_exec_path = 'python';
 	private $python_script_path = 'solver.py';
 
+	public $days_a_week = 5;
 	public $day_starting_time_default = '07:00'; // 9 AM
 	public $day_ending_time_default = '19:00'; // 7 PM
 	public $day_slot_time_default = 30; // 30 mins
@@ -88,14 +89,11 @@ class Scheduler
 		$settings_json = $this->getJSONFile ( $this->settings_json_path );
 		
 		if ( $settings_json ){
-			// $this->settings['day_starting_time'] = ( isset ($settings_json['day_starting_time']) && !empty ($settings_json['day_starting_time'] ) ) ? $settings_json['day_starting_time'] : $this->day_starting_time_default;
-			$this->settings['day_starting_time'] = $this->day_starting_time_default;
+			$this->settings['day_starting_time'] = ( isset ($settings_json['day_starting_time']) && !empty ($settings_json['day_starting_time'] ) ) ? $settings_json['day_starting_time'] : $this->day_starting_time_default;
 			
-			// $this->settings['day_ending_time'] = ( isset ($settings_json['day_ending_time']) && !empty ($settings_json['day_ending_time'] ) ) ? $settings_json['day_ending_time'] : $this->day_ending_time_default;
-			$this->settings['day_ending_time'] = $this->day_ending_time_default;
+			$this->settings['day_ending_time'] = ( isset ($settings_json['day_ending_time']) && !empty ($settings_json['day_ending_time'] ) ) ? $settings_json['day_ending_time'] : $this->day_ending_time_default;
 			
-			//$this->settings['day_slot_time'] = ( isset ($settings_json['day_slot_time']) && !empty ($settings_json['day_slot_time'] ) && is_numeric ($settings_json['day_slot_time']) && $settings_json['day_slot_time'] >= 30 ) ? $settings_json['day_slot_time'] : $this->day_slot_time_default;
-			$this->settings['day_slot_time'] = $this->day_slot_time_default;
+			$this->settings['day_slot_time'] = ( isset ($settings_json['day_slot_time']) && !empty ($settings_json['day_slot_time'] ) && is_numeric ($settings_json['day_slot_time']) && $settings_json['day_slot_time'] >= 30 ) ? $settings_json['day_slot_time'] : $this->day_slot_time_default;
 			
 			$this->settings['max_kids_per_teacher'] = ( isset ($settings_json['max_kids_per_teacher']) && !empty ($settings_json['max_kids_per_teacher'] ) && is_numeric ($settings_json['max_kids_per_teacher']) && $settings_json['max_kids_per_teacher'] > 0 ) ? intval($settings_json['max_kids_per_teacher']) : $this->max_kids_per_teacher_default;
 			
@@ -119,13 +117,11 @@ class Scheduler
 	function saveSettings(){
 		if ( isset ($_POST) && !empty ($_POST) ){
 			
-			// $this->settings['day_starting_time'] = ( isset ($_POST['day_starting_time']) && !empty ($_POST['day_starting_time'] ) ) ? $_POST['day_starting_time'] : $this->day_starting_time_default;
-			$this->settings['day_starting_time'] = $this->day_starting_time_default;
-			// $this->settings['day_ending_time'] = ( isset ($_POST['day_ending_time']) && !empty ($_POST['day_ending_time'] ) ) ? $_POST['day_ending_time'] : $this->day_ending_time_default;
-			$this->settings['day_ending_time'] = $this->day_ending_time_default;
+			$this->settings['day_starting_time'] = ( isset ($_POST['day_starting_time']) && !empty ($_POST['day_starting_time'] ) ) ? $_POST['day_starting_time'] : $this->day_starting_time_default;
 			
-			//$this->settings['day_slot_time'] = ( isset ($_POST['day_slot_time']) && !empty ($_POST['day_slot_time'] ) && is_numeric ($_POST['day_slot_time']) && $_POST['day_slot_time'] >= 30 ) ? $_POST['day_slot_time'] : $this->day_slot_time_default;
-			$this->settings['day_slot_time'] = $this->day_slot_time_default;
+			$this->settings['day_ending_time'] = ( isset ($_POST['day_ending_time']) && !empty ($_POST['day_ending_time'] ) ) ? $_POST['day_ending_time'] : $this->day_ending_time_default;
+			
+			$this->settings['day_slot_time'] = ( isset ($_POST['day_slot_time']) && !empty ($_POST['day_slot_time'] ) && is_numeric ($_POST['day_slot_time']) && $_POST['day_slot_time'] >= 30 ) ? $_POST['day_slot_time'] : $this->day_slot_time_default;
 			
 			$this->settings['max_kids_per_teacher'] = ( isset ($_POST['max_kids_per_teacher']) && !empty ($_POST['max_kids_per_teacher'] ) && is_numeric ($_POST['max_kids_per_teacher']) && $_POST['max_kids_per_teacher'] > 0 ) ? intval($_POST['max_kids_per_teacher']) : $this->max_kids_per_teacher_default;
 			
@@ -191,7 +187,7 @@ class Scheduler
     // empty teachers schedule first
     $this->teachers_schedule = array();
     
-    for ($x = 1; $x <= 7; $x++ ){
+    for ($x = 1; $x <= $this->days_a_week; $x++ ){
       $this->teachers_schedule['Days'][($x-1)] = array(
         'Slots' => array()
       );
@@ -218,7 +214,7 @@ class Scheduler
   * 
   */
   function createEmptyStudentsSchedule (){
-    for ($x = 1; $x <= 7; $x++ ){
+    for ($x = 1; $x <= $this->days_a_week; $x++ ){
       $this->students_schedule_count['Days'][($x-1)] = array(
         'Slots' => array()
       );
@@ -251,7 +247,7 @@ class Scheduler
   * 
   */
   function createRandomStudentsSchedule (){
-    for ($x = 1; $x <= 7; $x++ ){
+    for ($x = 1; $x <= $this->days_a_week; $x++ ){
       $this->students_schedule_count['Days'][($x-1)] = array(
         'Slots' => array()
       );
@@ -306,7 +302,7 @@ class Scheduler
 			}
 		}
 		
-		for ($x = 1; $x <= 7; $x++ ){
+		for ($x = 1; $x <= $this->days_a_week; $x++ ){
       $this->students_schedule_count['Days'][($x-1)] = array(
         'Slots' => array()
       );
@@ -403,33 +399,6 @@ class Scheduler
       }// end else
     }// end else
     
-  }// end function
-  
-  /**
-  * Not implemented yet
-  * Will update students schedules from user input (frontend) and recalculates everything
-  */
-  function recalculateSchedule(){
-    /* foreach ($_POST['slots'] as $k=>$v)
-    {
-      $values = array(); 
-      $array = explode(',',$v);     
-      foreach ($array as $val){
-        $values[$val] = $val;
-      }
-      $kid_index = 0;
-      
-      unset ( $this->schedule[$k]['kids']);
-    
-      if ( !empty ($values) )
-      {
-        foreach ($values as $new_kids_ids)
-        {
-          $this->schedule[$k]['kids'][$kid_index] = $this->kids[ ($new_kids_ids) ];
-          $kid_index++;
-        }
-      }
-    } */
   }// end function
   
   /**
@@ -574,7 +543,7 @@ class Scheduler
     else { $error = 'empty teachers json<br>'; $bad_json_format = 1; }
     
     if ( $bad_json_format ){
-      for ($x=1; $x<=7; $x++){
+      for ($x=1; $x<=$this->days_a_week; $x++){
         for ($y=1; $y <= $this->slot_total_count; $y++){
           $this->teachers_schedule_xn_format['x'.$x.'y'.$y]['FullTime'] = 0;
           $this->teachers_schedule_xn_format['x'.$x.'y'.$y]['PartTime'] = 0;
@@ -631,7 +600,7 @@ class Scheduler
     else { $bad_json_format = 1; }
     
     if ( $bad_json_format ){
-      for ($x=1; $x<=7; $x++){
+      for ($x=1; $x <= $this->days_a_week; $x++){
         for ($y=1; $y <= $this->slot_total_count; $y++){
           $this->students_schedule_xn_format['x'.$x.'y'.$y]['Students'] = array();
         }

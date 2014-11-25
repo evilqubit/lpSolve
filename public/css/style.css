@@ -82,44 +82,66 @@ section .head {
 .push{
   height: 193px
 }
-.fb_iframe_widget iframe {
-  max-height: 30px !important;
-}
-email-data::after {
-  content: attr(m-domain);
-}
-email-data::before {
-  content: attr(m-user);
+.label { 
+  font-size: 12px;
+  padding: .6em;
+  text-align: left;
+	border-radius: 0 0 0;
+	-moz-border-radius: 0 0 0;
+	-webkit-border-radius: 0 0 0;
 }
 table { 
   margin-top: 40px;
   font-size: 14px
 }
-table .label { 
-  display: block;
-  margin-bottom: 5px;
-	width: 82%;
-  margin-right: 0;
-  position: relative;
-  border-radius: 0
-}
-.label { 
-  font-size: 12px;
-  padding: .6em;
-  text-align: left
-}
+
 .table tbody>tr>td, .table tbody>tr>th, .table tfoot>tr>td, .table tfoot>tr>th, .table thead>tr>td, .table thead>tr>th{padding:5px;}
 .table thead>tr>th { vertical-align: middle; }
 .all-kids .label { cursor: pointer; position: relative; z-index: 999999999; display: inline-block; margin-bottom: 10px }
 .all-kids .close-me { display: none }
 
-.close-me { }
-
-table .label.teacher_count  { 
-  padding: 5px;
+table .student-entry  { 
+  display: block;
+  margin-bottom: 5px;
+	width: 82%;
+  margin-right: 0;
+  position: relative;
+	display: none;
+	transition: transform .2s ease-in;
+	-moz-transition: transform .2s ease-in;
+	-ms-transition: transform .2s ease-in;
+	-o-transition: transform .2s ease-in;
+}
+table .label.teacher_count { 
   display: block;
   margin-top: 10px;
 	width: 100%
+}
+table .label.toggle-students{
+  display: block;
+  margin-bottom: 10px;
+	width: 100%;
+	background: rgb(34, 137, 110);
+	color: #fff;
+	cursor: pointer;
+}
+#toggle_students{
+	clear: both;
+	margin-top: 10px;
+	display: block;
+	background: rgb(104, 207, 183);
+	border: rgb(104, 207, 183);
+}
+#toggle_students.hide_me {
+	background: grey;
+	border: grey;
+}
+table .student_count {
+	margin-bottom: 10px;
+}
+
+table .label.toggle-students:hover{
+	background: rgb(19, 95, 75);
 }
 
 .ui-state-error { background: #d9534f }
