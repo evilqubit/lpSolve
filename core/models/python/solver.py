@@ -31,6 +31,11 @@ fullTimersAvailable = settings_data["fulltime_available_teachers"]
 partTimersAvailable = settings_data["parttime_available_teachers"]
 studentsPerTeacher = settings_data["max_kids_per_teacher"]
 
+#Constants
+# fullTimersAvailable = 1000
+# partTimersAvailable = 1000
+# studentsPerTeacher = 1
+
 #Cost coeficients
 FULL = 100
 PART = 50
