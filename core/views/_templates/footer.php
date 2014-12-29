@@ -1,4 +1,4 @@
-<footer id="contact">
+<!--<footer id="contact">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -6,7 +6,7 @@
       </div>
     </div>
   </div>
-</footer>
+</footer>-->
 
 <script type="text/javascript" src="<?php echo URL.'/public/js/bootstrap.min.js';?>"></script>
 <script type="text/javascript" src="<?php echo URL.'/public/js/scripts.js';?>"></script>

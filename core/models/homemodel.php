@@ -3,7 +3,13 @@ use \Core\Models\Classes\Scheduler;
 
 class HomeModel
 {
+	private $schedulerClass;
+	
 	function __construct($db) {
+		
+		include ('classes/scheduler.php');
+		$this->schedulerClass = new Scheduler;
+		
 		try {
 			$this->db = $db;
 		} catch (PDOException $e) {
@@ -11,19 +17,18 @@ class HomeModel
 		}
 	}
 
-	public function index(){
-		include ('classes/scheduler.php');
-		$scheduler = new Scheduler;
-		$scheduler->kickstart();
-		return $scheduler;
+	public function index($args = []){
 		
-		// $sql = 'SELECT * FROM about';
-		// $query = $this->db->prepare($sql);
-		// $query->execute();
+		if ( isset ($args['studentsClass']) )
+			$this->schedulerClass->useStudentClass( $args['studentsClass'] );
 		
-		// return ( $query->rowCount() > 1 ) ? $query->fetchAll() : $query->fetch();
-	}
+		// testing mode
+		if ( isset($_GET['test']) && $_GET['test'] == 1 ){
+			$this->schedulerClass->enableTesting();
+		}
 		
-	public function test($args=array()){
+		$this->schedulerClass->kickstart();
+		
+		return $this->schedulerClass;
 	}
 }

@@ -7,8 +7,22 @@ body, html {
   width: 100%;
   background: #ffffff;
 }
-.container, .body {
-  min-width: 980px
+.page-home .container {
+	min-width: 980px;
+	width: 100%;
+	margin: 0;
+	padding: 0 20px;
+	margin: 0 auto;
+	max-width: none;
+}
+.container {
+	min-width: 980px;
+}
+select.form-control {
+	padding: 3px;
+	margin-top: 5px;
+	font-size: 13px;
+	height: auto;
 }
 .mtop30 { margin-top: 30px }
 p span {
@@ -50,37 +64,17 @@ section {
 }
 #navbar {
   border-radius: 0;
-  border: 0
-}
-.block {
-  min-height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-section .head {
-  font-size: 3.5em;
-  font-weight: 700;
-  color: #ed3024;
-  text-transform: uppercase;
-  margin-bottom: 50px;
-  margin-top: 0;
-}
-.box {
-  padding: 50px 0;
-}
-.boxSpaced {
-  margin: 56px 0 80px 0;
-  min-height: 700px;
+  border: 0;
+	margin-bottom: 20px;
 }
 #wrap{
   height: auto!important;
   height: 100%;
   min-height: 100%;
-  margin: 0 auto -193px
+  margin: 0 auto -42px
 }
 .push{
-  height: 193px
+  height: 42px
 }
 .label { 
   font-size: 12px;
@@ -90,95 +84,7 @@ section .head {
 	-moz-border-radius: 0 0 0;
 	-webkit-border-radius: 0 0 0;
 }
-table { 
-  margin-top: 40px;
-  font-size: 14px
-}
-
-.table tbody>tr>td, .table tbody>tr>th, .table tfoot>tr>td, .table tfoot>tr>th, .table thead>tr>td, .table thead>tr>th{padding:5px;}
-.table thead>tr>th { vertical-align: middle; }
-.all-kids .label { cursor: pointer; position: relative; z-index: 999999999; display: inline-block; margin-bottom: 10px }
-.all-kids .close-me { display: none }
-
-table .student-entry  { 
-  display: block;
-  margin-bottom: 5px;
-	width: 82%;
-  margin-right: 0;
-  position: relative;
-	display: none;
-	transition: transform .2s ease-in;
-	-moz-transition: transform .2s ease-in;
-	-ms-transition: transform .2s ease-in;
-	-o-transition: transform .2s ease-in;
-}
-table .label.teacher_count { 
-  display: block;
-  margin-top: 10px;
-	width: 100%
-}
-table .label.toggle-students{
-  display: block;
-  margin-bottom: 10px;
-	width: 100%;
-	background: rgb(34, 137, 110);
-	color: #fff;
-	cursor: pointer;
-}
-#toggle_students{
-	clear: both;
-	margin-top: 10px;
-	display: block;
-	background: rgb(104, 207, 183);
-	border: rgb(104, 207, 183);
-}
-#toggle_students.hide_me {
-	background: grey;
-	border: grey;
-}
-table .student_count {
-	margin-bottom: 10px;
-}
-
-table .label.toggle-students:hover{
-	background: rgb(19, 95, 75);
-}
-
-.ui-state-error { background: #d9534f }
-.ui-draggable-dragging{
-    background: #5cb85c;
-    cursor: pointer
-}
-.ui-state-active {
-  background: #5cb85c 
-}
-
-.log { display: none; margin-top: 20px }
-.btn {
-  border-radius: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-}
-.close-me {
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  right: -22px;
-  background: #d9534f;
-  padding: 7px;
-  height: 100%;
-}
-.close-me:hover { background: #A13936 }
-.tooltip-inner {
-  background-color: #ed3024;
-}
-i.link {
-  cursor: pointer;
-}
-
 /* Nav */
-.nav {
-}
 .navbar-default .navbar-nav>li>a, .navbar-default .navbar-text{
   font-size: 14px;
   text-transform: uppercase;
@@ -191,87 +97,184 @@ i.link {
 .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-text:hover{
   color: #ed3024;
 }
-
-
-.tleft { text-align: left }
-.data h4 { margin: 30px 0 20px 0}
-.data p:first-child, .data h4:first-child { margin-top: 0 }
-.data ul li { 
-  background: none;
-  color: #333;
-  padding-left: 5px;
-  list-style: circle;
-  margin: 0 0 10px 0;
+.all-students .label, .all-teachers .label { cursor: pointer; position: relative; z-index: 999999999; display: inline-block; margin-bottom: 10px }
+.all-teachers .label {
+	background: rgb(93, 171, 171);
 }
-.data ul { margin-left: 27px }
+.all-teachers .teacher-entry .total-hours{
+	margin: 5px 0 10px 0;
+}
+.all-students .close-me, .all-teachers .close-me {
+	display: none
+}
+#table-schedule {
+	margin-top: 20px;
+  font-size: 14px;
+   width: 100%;
+}
+#table-schedule th, #table-schedule td {
+	padding: 5px;
+}
+table td
+{
+	word-break: break-word;
+	vertical-align: top;
+}
+table.fixed
+{
+table-layout:fixed;
+}
+
+table .student-entry  { 
+	display: none;
+}
+.all-students .label, table .student-entry {
+	background: rgb(46, 80, 142);
+}
+table .teacher-entry {
+	display: block;
+}
+table .student-entry, table .teacher-entry{
+	margin-top: 5px;
+	position: relative;
+	width: 95%;
+	margin-right: 0;
+	white-space: inherit;
+	padding-right: 31px;
+	line-height: 15px;
+	cursor: pointer;
+}
+table .student-entry:hover, table .teacher-entry:hover {
+	opacity: 0.85;
+	filter: alpha(opacity=85);
+}
+table .teacher-entry.teacher-mode-vacation{
+	background: #eee;
+	color: #999;
+}
+table .teacher-entry.teacher-mode-fulltime{
+	background: rgb(36, 95, 95);
+	color: #fff;
+}
+table .teacher-entry.teacher-mode-parttime{
+	background: rgb(59, 144, 145);
+	color: #fff;
+}
+
+table .teachers-head, table .students-head {
+	color: #fff;
+	font-size: 13px;
+	font-weight: bold;
+	display: block;
+}
+table .students-entries, table .teachers-entries {
+	padding: 5px 5px 10px 5px;
+	background: rgb(54, 109, 208);
+	margin-bottom: 10px;
+	position: relative;
+}
+table .teachers-entries {
+	background: rgb(93, 171, 171)
+}
+#homepage-form.show-students table .student-entry{
+	display: block;
+}
+table .label.teachers-stats { 
+	display: block;
+	width: 100%;
+	margin-top: 10px;
+	background: #f7f7f7;
+	color: #666;
+}
+table .label.toggle-students{
+  display: block;
+  margin-bottom: 10px;
+	width: 100%;
+	background: rgb(34, 137, 110);
+	color: #fff;
+	cursor: pointer;
+}
+#toggle_students{
+	margin-left: 10px;
+	background: rgb(104, 207, 183);
+	border: rgb(104, 207, 183);
+	height: 34px;
+}
+#toggle_students.hide_me {
+	background: grey;
+	border: grey;
+}
+table .student_count {
+	margin-bottom: 10px;
+}
+table .label.toggle-students:hover{
+	background: rgb(19, 95, 75);
+}
+.ui-state-error { background: #d9534f }
+.ui-draggable-dragging{
+	background: #5cb85c;
+	cursor: pointer;
+	z-index: 99999;
+}
+.ui-state-active {
+  background: #5cb85c 
+}
+.log { display: none; margin-top: 20px }
+.btn {
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+}
+.close-me {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #d9534f;
+  padding: 7px;
+  height: 100%;
+}
+.close-me span {
+	position: relative;
+	top: 50%;
+	display: block;
+	margin-top: -6px;
+}
+.close-me:hover { background: #A13936 }
 
 .toggle {
   margin: 10px;
   border: 0;
   padding: 8px 14px;
 }
-img.full-screen {
-  margin-top: 20px;
-  max-width: 100%
+#left-panel {
+	position: fixed;
+	z-index: 999;
+	height: 85%;
+	width: 23%;
 }
-img.full-screen.move-left {
-  margin-left: -50px
+#left-panel .head:first-child {
+	margin-top: 0;
 }
-
-.thumbnail {
-  position: relative;
-  background-color: #fff;
-  border: 1px solid #eee;
-  border-radius: 0;
-  padding:10px;
-  margin-bottom: 30px;
-  height: 360px;
+#left-panel .all-teachers, #left-panel .all-students{
+	height: 44%;
+	overflow-y: scroll;
 }
-
-.thumbnail .caption h3 {
-  margin: 10px 0 5px 0;
-  line-height: 1.4em;
-  font-size: 20px;
-  max-height: 85px;
-  overflow: hidden;
-}
-.thumbnail p.dsc {
-  margin: 10px 0 20px 0;
-  height: 60px;
-  overflow: hidden;
+#left-panel .head-teachers {
+	border-top: 1px solid #ccc;
+	padding-top: 10px;
 }
 
-.thumbnail .caption a {
-  color: #ed3024;
-}
 /* ---------------------
  FOOTER
 */
 footer {
   color: #333;
-  padding: 30px;
+  padding: 10px;
   font-size: 1em;
-  font-weight: 700;
-  border-top: 2px solid #DADADA;
-  background-color: #fff;
-  text-align: left;
+  border-top: 2px solid #f7f7f7;
 }
 
-@media (min-width: 1500px){
-  .block{
-    min-height: 0
-  }
-}
-@media (max-width:1100px){
-}
-
-@media (max-width:991px){
-  .md-mtop40 { margin-top: 40px }
-  .md-tcenter{ text-align: center }
-  .md-tcenter ul { margin-left: 0; }
-  .md-tcenter ul li { padding-left: 0; list-style: none}
-  .col-mt { margin-top: 40px } 
-}
 @media (max-width: 992px){
   .navbar-collapse.collapse {
     display: none !important;
@@ -279,40 +282,4 @@ footer {
     padding-bottom: 0;
     overflow: visible !important;
   }
-}
-
-@media (min-width:992px) and (max-width:1200px){
-}
-@media (max-width:767px){
-}
-@media (max-width:768px)
-{
-  .block { margin-bottom: 40px }
-  img.full-screen.move-left { margin-left: 0 }
-  
-  img.full-screen {
-    width: 100%;
-    text-align: center
-  }
-  .thumbnail { height: auto }
-  p { margin: 0 0 20px 0}
-
-  .block {
-      min-height: inherit;
-  }
-  span.d {
-    margin: 25px 0;
-  }
-  p.lead {
-      font-size: 1.3em;
-  }
-}
-
-@media (max-width:560px){
-}
-@media (max-width:480px) {
-}
-@media (max-width:360px) {
-}
-@media (max-width:280px) {  
 }

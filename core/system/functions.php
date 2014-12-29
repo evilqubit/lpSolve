@@ -1,40 +1,50 @@
 <?php
-function codeRand( $len = 0 )
-{
-	if( $len < 1 ) $len = 5;
-	$a = 'abcdefghijklmnopqrstuvwxyz1234567890';
-	$c = $a[rand(0, 25)];
-	for($i=0; $i< $len-1; $i++) { $c .= $a[rand(0, 35)]; }
-	return $c;
-}
-function cleanTitleURL( $s )
-{
-	$s = strtolower($s);	
-	$s = preg_replace("/[^a-z0-9-_\s]/i", "", $s );
-	$s = preg_replace("/\s+/", "-", trim( $s ) );
+/**
+* Read JSON File content using CURL
+*
+* @param string $json_file_path
+* @return array|string array from JSON data or empty string
+*/
+function getJSONFile ($data){
 	
-	return $s;
-}
+	$output = '';
+	$fp = '';
+	
+	$json_file_path = isset($data['path']) ? $data['path'] : '';
+	$json_file_url = isset($data['url']) ? $data['url'] : '';
+	
+	// Open JSON File (create if not exists 'w')
+	if (!file_exists($json_file_path)) {
+		$fp = fopen( $json_file_path, 'w');
+		fclose($fp);
+		chmod ($json_file_path, 0777);
+	}
+	
+	// prevent caching
+	$json_file_path_no_cache = $json_file_url.'?_='.time();
+	
+	// Get JSON file contents
+	$curl = curl_init();
+	if (FALSE === $curl)
+		throw new Exception('failed to initialize');
+		
+	curl_setopt ($curl, CURLOPT_URL, $json_file_path_no_cache);
+	curl_setopt ($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt ($curl, CURLOPT_CAINFO, dirname(__FILE__)."/cacert.pem");
 
-function make_slug ($s){
-	$s = preg_replace('/\W+/','-',$s);
-	$s = preg_replace('/[^A-Za-z0-9-]+/', '-', $s);
-   return strtolower($s);
-} 
+	$json_file_content = curl_exec($curl);
 
-function mailer( $to, $subject, $msg )
-{
-	$headers = '';
-	$headers .= "MIME-Version: 1.0\r\n";
-	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-	$headers .= "Return-Path: \"".SITE_FROM_EMAIL_NAME."\" <". SITE_FROM_EMAIL_ADDRESS .">\r\n";
-	$headers .= "Reply-To: \"".SITE_FROM_EMAIL_NAME."\" <". SITE_FROM_EMAIL_ADDRESS .">\r\n";
-	$headers .= "From: \"".SITE_FROM_EMAIL_NAME."\" <". SITE_FROM_EMAIL_ADDRESS .">\r\n";
-	$headers .= "X-Priority: 1\r\n";
-	$headers .= "X-Mailer: PHP/".phpversion()."\r\n";
-	$headers .= "Content-Transfer-Encoding: 8bit\r\n";
-	$headers .= "Priority: Urgent\r\n";
-	$headers .= "Importance: high";
+	if($json_file_content === false)
+		return '';
 
-	return @mail($to, $subject, $msg, $headers);
+	if ( isset ($json_file_content) && !empty ($json_file_content) ){
+		// fetch JSON content as array
+		$json_result = json_decode ($json_file_content, true);
+		if ( isset ($json_result) ){
+			$output = $json_result;
+		}
+	}
+	curl_close($curl);
+	
+	return $output;
 }

@@ -5,9 +5,7 @@ import json
 from pprint import pprint
 import sys
 
-
 # lp_maker(f,a,b,e, vlb, vub, xint, scalemode, setminim)
-
 # f: n vector of coefficients for a linear objective function.
 # a: m by n matrix representing linear constraints.
 # b: m vector of right sides for the inequality constraints.
@@ -21,57 +19,113 @@ import sys
 # scalemode: Autoscale flag. Off when 0 or omitted.
 # setminim: Set maximum lp when this flag equals 0 or omitted.
 
+def aVectorForWorkHours(workHours):
+	if workHours == 12: 
+		slot1  = [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot2  = [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot3  = [1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot4  = [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot5  = [1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot6  = [1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot7  = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot8  = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0]
+		slot9  = [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]
+		slot10 = [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0]
+		slot11 = [1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0]
+		slot12 = [1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
+		slot13 = [1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0]
+		slot14 = [1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0]
+		slot15 = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0]
+		slot16 = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,0]
+		slot17 = [0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1]
+		slot18 = [0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,1,1,1,1,1,1]
+		slot19 = [0,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,1,1,1,1,1,1]
+		slot20 = [0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,0,1,1,1,1,1]
+		slot21 = [0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1,1,1,1]
+		slot22 = [0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,1,1,1]
+		slot23 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,1]
+		slot24 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1]
+		fullAvailableConstraint = [1 , 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		partAvailableConstraint = [0 , 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+		A = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10, slot11, slot12, slot13, slot14, slot15, slot16, slot17, slot18, slot19, slot20, slot21, slot22, slot23, slot24, fullAvailableConstraint, partAvailableConstraint]
+
+	if workHours == 10: 
+		slot1  = [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot2  = [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot3  = [1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]
+		slot4  = [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0]
+		slot5  = [1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]
+		slot6  = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0]
+		slot7  = [1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0]
+		slot8  = [1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
+		slot9  = [1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0]
+		slot10 = [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0]
+		slot11 = [1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0]
+		slot12 = [1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,0]
+		slot13 = [1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1]
+		slot14 = [1,0,1,0,1,0,1,0,1,0,0,1,1,1,1,1,1,1]
+		slot15 = [1,0,1,0,1,0,1,0,1,0,0,0,1,1,1,1,1,1]
+		slot16 = [1,0,1,0,1,0,1,0,1,0,0,0,0,1,1,1,1,1]
+		slot17 = [0,0,1,0,1,0,1,0,1,0,0,0,0,0,1,1,1,1]
+		slot18 = [0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,1,1,1]
+		slot19 = [0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,1]
+		slot20 = [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1]
+		fullAvailableConstraint = [1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0]
+		partAvailableConstraint = [0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1]
+		A = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10, slot11, slot12, slot13, slot14, slot15, slot16, slot17, slot18, slot19, slot20, fullAvailableConstraint, partAvailableConstraint]
+
+	if workHours == 8: 
+		slot1  = [1,1,0,0,0,0,0,0,0,0]
+		slot2  = [1,1,1,0,0,0,0,0,0,0]
+		slot3  = [1,1,1,1,0,0,0,0,0,0]
+		slot4  = [1,1,1,1,1,0,0,0,0,0]
+		slot5  = [1,1,1,1,1,1,0,0,0,0]
+		slot6  = [1,1,1,1,1,1,1,0,0,0]
+		slot7  = [1,1,1,1,1,1,1,1,0,0]
+		slot8  = [1,1,1,1,1,1,1,1,1,0]
+		slot9  = [1,0,1,1,1,1,1,1,1,1]
+		slot10 = [1,0,0,1,1,1,1,1,1,1]
+		slot11 = [1,0,0,0,1,1,1,1,1,1]
+		slot12 = [1,0,0,0,0,1,1,1,1,1]
+		slot13 = [1,0,0,0,0,0,1,1,1,1]
+		slot14 = [1,0,0,0,0,0,0,1,1,1]
+		slot15 = [1,0,0,0,0,0,0,0,1,1]
+		slot16 = [1,0,0,0,0,0,0,0,0,1]
+		fullAvailableConstraint = [1,0,0,0,0,0,0,0,0,0]
+		partAvailableConstraint = [0,1,1,1,1,1,1,1,1,1]
+		A = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10, slot11, slot12, slot13, slot14, slot15, slot16, fullAvailableConstraint, partAvailableConstraint]
+
+	return A
+
+def fVectorForWorkHours(workHours, FULL, PART):
+	if workHours == 12:
+		f = [FULL , PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
+	if workHours == 10:
+		f = [FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
+	if workHours == 8:
+		f = [FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
+	return f
+
+
 #Parse JSON settings from file
+# json_settings = open('json_settings')
 json_settings = open('zejsonfiles/settings.json')
 settings_data = json.load(json_settings)
 json_settings.close()
 
 #Constants
+FULL = 100
+PART = 50
 fullTimersAvailable = settings_data["fulltime_available_teachers"]
 partTimersAvailable = settings_data["parttime_available_teachers"]
 studentsPerTeacher = settings_data["max_kids_per_teacher"]
-
-#Constants
-# fullTimersAvailable = 1000
-# partTimersAvailable = 1000
-# studentsPerTeacher = 1
-
-#Cost coeficients
-FULL = 100
-PART = 50
+workHours = settings_data["day_length"]
 
 #Objective function
-f = [FULL , PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
+f = fVectorForWorkHours(workHours, FULL, PART)
 
 #Create 'A' vector
-slot1  = [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-slot2  = [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-slot3  = [1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-slot4  = [1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-slot5  = [1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-slot6  = [1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-slot7  = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]
-slot8  = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0]
-slot9  = [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]
-slot10 = [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0]
-slot11 = [1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0]
-slot12 = [1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
-slot13 = [1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0]
-slot14 = [1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0]
-slot15 = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0]
-slot16 = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,0]
-slot17 = [0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1]
-slot18 = [0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,1,1,1,1,1,1]
-slot19 = [0,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,1,1,1,1,1,1]
-slot20 = [0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,0,1,1,1,1,1]
-slot21 = [0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1,1,1,1]
-slot22 = [0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,1,1,1]
-slot23 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,1]
-slot24 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1]
-fullAvailableConstraint = [1 , 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-partAvailableConstraint = [0 , 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-
-A = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10, slot11, slot12, slot13, slot14, slot15, slot16, slot17, slot18, slot19, slot20, slot21, slot22, slot23, slot24, fullAvailableConstraint, partAvailableConstraint]
+A = aVectorForWorkHours(workHours)
 
 #Create signs for equations
 signs = [None] * len(A)
@@ -83,8 +137,10 @@ for x in range(0, len(A)):
 		signs[x] = -1
 
 #Parse JSON from file
+# json_data = open('json_in')
 json_data = open('zejsonfiles/students_schedule_count_for_python.json')
 data = json.load(json_data)
+json_data.close()
 
 parsedDays = data["Days"]
 numberOfDays = len(parsedDays)
@@ -134,7 +190,10 @@ for day in range(0,numberOfDays):
 # Create final output JSON struct
 finalOutputDict = {"Days" : daysArray}
 
-print "\n"
-
 # Print finalOutputDict as JSON to console
+# print "\n"
 print json.dumps(finalOutputDict)
+
+#Write final output to file
+# with open('zejsonfiles/finalOut.json', 'w') as outfile:
+  # json.dump(finalOutputDict, outfile)

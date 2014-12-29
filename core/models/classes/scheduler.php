@@ -3,66 +3,42 @@ namespace Core\Models\Classes;
 
 class Scheduler
 {
-	public $kids = array (
-	 1 => array ('id' => 1, 'name' => 'Patrick' ),
-	 2 => array ('id' => 2, 'name' => 'Joe' ),
-	 3 => array ('id' => 3, 'name' => 'John' ),
-	 4 => array ('id' => 4, 'name' => 'Jenny' ),
-	 5 => array ('id' => 5, 'name' => 'Carla' ),
-	 6 => array ('id' => 6, 'name' => 'Patricia' ),
-	 7 => array ('id' => 7, 'name' => 'Jonny' ),
-	 8 => array ('id' => 8, 'name' => 'Rabih' ),
-	 9 => array ('id' => 9, 'name' => 'Carl' ),
-	 10 => array ('id' => 10, 'name' => 'Mike' ),
-	 11 => array ('id' => 11, 'name' => 'Lisa' ),
-	 12 => array ('id' => 12, 'name' => 'Elie' ),
-	 13 => array ('id' => 13, 'name' => 'Carlo' ),
-	 14 => array ('id' => 14, 'name' => 'Jenna' ),
-	 15 => array ('id' => 15, 'name' => 'Mary' ),
-	 16 => array ('id' => 16, 'name' => 'Roy' ),
-	 17 => array ('id' => 17, 'name' => 'Jamil' ),
-	 18 => array ('id' => 18, 'name' => 'Lizz' ),
-	 19 => array ('id' => 19, 'name' => 'Catherine' ),
-	 20 => array ('id' => 20, 'name' => 'Catherina' ),
-	 21 => array ('id' => 21, 'name' => 'Ramona' ),
-	 22 => array ('id' => 22, 'name' => 'Jason' ),
-	 23 => array ('id' => 23, 'name' => 'Yves' ),
-	 24 => array ('id' => 24, 'name' => 'Arthur' ),
-	 25 => array ('id' => 25, 'name' => 'Ross' )
-	);
-
-	public $settings = array();
-	public $students_schedule = array();
-	public $students_schedule_xn_format = array();
-	public $students_schedule_count = array();
+	public $settings = [];
+	public $students_schedule = [];
+	public $students_schedule_xn_format = [];
+	public $students_schedule_count = [];
 	public $emptyScheduleFlag = false;
 
-	public $teachers_schedule_xn_format = array();  
-	public $teachers_schedule = array();
+	public $testingMode = 0;
+	
+	public $teachers_schedule_xn_format = [];  
+	public $teachers_schedule = [];
 	public $teachers_schedule_json = '';
 
 	private $json_main_folder_name = 'zejsonfiles';
 	private $python_main_folder_name = 'python';
 
-	private $settings_json_path = 'settings.json';
-
-	private $students_schedule_json_path = 'students_schedule.json';
-	private $students_schedule_count_json_path = 'students_schedule_count_for_python.json';
-	private $teachers_schedule_json_path = 'teachers_schedule.json';
-	// private $python_exec_path = 'C:\PYTHON33\python.exe';
+	private $json_settings = ['name'=>'settings'];
+	private $json_students_schedule = ['name'=>'students_schedule'];
+	private $json_students_schedule_count = ['name'=>'students_schedule_count_for_python'];
+	private $json_teachers_schedule = ['name'=>'teachers_schedule'];
+	private $json_students_schedule_imported;
+	
 	private $python_exec_path = 'python';
 	private $python_script_path = 'solver.py';
 
 	public $days_a_week = 5;
-	public $day_starting_time_default = '07:00'; // 9 AM
-	public $day_ending_time_default = '19:00'; // 7 PM
+	public $day_starting_time_default = '07:00'; // 7 AM
+	public $day_ending_time_default = '17:00'; // 5 PM
 	public $day_slot_time_default = 30; // 30 mins
 	public $max_kids_per_teacher_default = 5;
 	public $fulltime_available_teachers_default = 69;
 	public $parttime_available_teachers_default = 69;
 	public $slot_total_count = '';
+	
+	public $studentsClass = '';
 
-	public $returnData = array();
+	public $returnData = [];
   
   function __construct(){
 		// Set Paths for JSON/Python Files on server
@@ -81,19 +57,43 @@ class Scheduler
 		// format student array to x1y1, x1y2, format to be used on front end
 		$this->saveFormatStudentsSchedule();
 		
-		// format teachers araay to x1y1, x1y2, format to be used on front end
+		// format teachers array to x1y1, x1y2, format to be used on front end
 		$this->saveFormatTeachersSchedule();
 	}
 	
+	function useStudentClass ( $class ){
+		$this->studentsClass = $class;
+	}
+	
 	function getSettings(){
-		$settings_json = $this->getJSONFile ( $this->settings_json_path );
-		
+		// $settings_json = getJSONFile ( $this->settings_json_path );
+		$settings_json = getJSONFile ( $this->json_settings );
+
 		if ( $settings_json ){
 			$this->settings['day_starting_time'] = ( isset ($settings_json['day_starting_time']) && !empty ($settings_json['day_starting_time'] ) ) ? $settings_json['day_starting_time'] : $this->day_starting_time_default;
 			
 			$this->settings['day_ending_time'] = ( isset ($settings_json['day_ending_time']) && !empty ($settings_json['day_ending_time'] ) ) ? $settings_json['day_ending_time'] : $this->day_ending_time_default;
 			
-			$this->settings['day_slot_time'] = ( isset ($settings_json['day_slot_time']) && !empty ($settings_json['day_slot_time'] ) && is_numeric ($settings_json['day_slot_time']) && $settings_json['day_slot_time'] >= 30 ) ? $settings_json['day_slot_time'] : $this->day_slot_time_default;
+			// hack to force day length to 8, 10, 12 hours
+			// minutes must match
+			$dayLengthInHours = ( strtotime($this->settings['day_ending_time']) - strtotime($this->settings['day_starting_time']) ) / 60 / 60;
+			// 8, 10, 12 hours allowed!
+			$checkDayLength = ( is_int($dayLengthInHours ) && ($dayLengthInHours == 8 || $dayLengthInHours == 10 || $dayLengthInHours == 12) ) ? 1 : 0;
+			
+			// you shall not pass if it's not 8, 10, or 12 hours
+			// we reset values to default here
+			if ( !$checkDayLength ){
+				$this->settings['day_starting_time'] = $this->day_starting_time_default;
+				$this->settings['day_ending_time'] = $this->day_ending_time_default;
+			}
+			// we are trusting the default values to be 8, 10, 12 hours!!!
+			// trust the developer lol
+			$this->settings['day_length'] = $this->settings['day_ending_time'] - $this->settings['day_starting_time'];
+			// end hack
+			
+			// since Python only accepts 30 minute slots
+			// this setting must be 30, 60, 90, 120, etc...
+			$this->settings['day_slot_time'] = ( isset ($settings_json['day_slot_time']) && !empty ($settings_json['day_slot_time'] ) && is_numeric ($settings_json['day_slot_time']) && is_int( $settings_json['day_slot_time']/30 ) && $settings_json['day_slot_time'] > 0 ) ? $settings_json['day_slot_time'] : $this->day_slot_time_default;
 			
 			$this->settings['max_kids_per_teacher'] = ( isset ($settings_json['max_kids_per_teacher']) && !empty ($settings_json['max_kids_per_teacher'] ) && is_numeric ($settings_json['max_kids_per_teacher']) && $settings_json['max_kids_per_teacher'] > 0 ) ? intval($settings_json['max_kids_per_teacher']) : $this->max_kids_per_teacher_default;
 			
@@ -109,19 +109,52 @@ class Scheduler
 			$this->settings['max_kids_per_teacher'] = $this->max_kids_per_teacher_default;
 			$this->settings['fulltime_available_teachers'] = $this->fulltime_available_teachers_default;
 			$this->settings['parttime_available_teachers'] = $this->parttime_available_teachers_default;
-			
-			$this->saveSettingsToJSON();
 		}
+		
+		$this->saveSettingsToJSON();
 	}
 	
 	function saveSettings(){
 		if ( isset ($_POST) && !empty ($_POST) ){
 			
-			$this->settings['day_starting_time'] = ( isset ($_POST['day_starting_time']) && !empty ($_POST['day_starting_time'] ) ) ? $_POST['day_starting_time'] : $this->day_starting_time_default;
+			// if json student schedule import
+			// save it
+			$json_students_schedule_imported = isset ($_FILES['json_schedule_import']) && !empty ($_FILES['json_schedule_import'] ) ? $_FILES['json_schedule_import'] : '';
+			if ( isset($json_students_schedule_imported) && $json_students_schedule_imported['error'] == 0 ){
+				$tmp_name = $_FILES["json_schedule_import"]["tmp_name"];
+				$zejsonfilesPath = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->json_students_schedule['name'].'.json';
+				@move_uploaded_file($tmp_name, $zejsonfilesPath);
+			}
 			
+			$this->settings['day_starting_time'] = ( isset ($_POST['day_starting_time']) && !empty ($_POST['day_starting_time'] ) ) ? $_POST['day_starting_time'] : $this->day_starting_time_default;
 			$this->settings['day_ending_time'] = ( isset ($_POST['day_ending_time']) && !empty ($_POST['day_ending_time'] ) ) ? $_POST['day_ending_time'] : $this->day_ending_time_default;
 			
-			$this->settings['day_slot_time'] = ( isset ($_POST['day_slot_time']) && !empty ($_POST['day_slot_time'] ) && is_numeric ($_POST['day_slot_time']) && $_POST['day_slot_time'] >= 30 ) ? $_POST['day_slot_time'] : $this->day_slot_time_default;
+			// hack to force day length to 8, 10, 12 hours
+			// minutes must match
+			$dayLengthInHours = ( strtotime($this->settings['day_ending_time']) - strtotime($this->settings['day_starting_time']) ) / 60 / 60;
+			// 8, 10, 12 hours allowed!
+			$checkDayLength = ( is_int($dayLengthInHours ) && ($dayLengthInHours == 8 || $dayLengthInHours == 10 || $dayLengthInHours == 12) ) ? 1 : 0;
+			
+			// you shall not pass if it's not 8, 10, or 12 hours
+			if ( !$checkDayLength ){
+				$this->returnData['message_status'] = 0;
+				$this->returnData['message'] = 'Only 8, 10 and 12 hour day lengths is allowed. Please make sure the minutes match as well. 7:45 to 5:40 won\'t work';
+				return '';
+			}
+			$this->settings['day_length'] = $dayLengthInHours;
+			// end hack
+			
+			// since Python only accepts 30 minute slots
+			// this setting must be 30, 60, 90, 120, etc...
+			$slotTimeCheck = ( isset ($_POST['day_slot_time']) && !empty ($_POST['day_slot_time'] ) && is_numeric ($_POST['day_slot_time']) && is_int( $_POST['day_slot_time']/30 ) && $_POST['day_slot_time'] > 0 ) ? 1 : 0;
+			$this->settings['day_slot_time'] = ($slotTimeCheck) ? $_POST['day_slot_time'] : $this->day_slot_time_default;
+			
+			// you shall not pass if it's not 8, 10, or 12 hours
+			if ( !$slotTimeCheck ){
+				$this->returnData['message_status'] = 0;
+				$this->returnData['message'] = 'Only 30-minute based slot times are currently allowed';
+				return '';
+			}
 			
 			$this->settings['max_kids_per_teacher'] = ( isset ($_POST['max_kids_per_teacher']) && !empty ($_POST['max_kids_per_teacher'] ) && is_numeric ($_POST['max_kids_per_teacher']) && $_POST['max_kids_per_teacher'] > 0 ) ? intval($_POST['max_kids_per_teacher']) : $this->max_kids_per_teacher_default;
 			
@@ -135,20 +168,54 @@ class Scheduler
 		}
 	}
 	
+	/**
+	* Enable testing mode
+	* add ?test=1 in the URL to debug useful data
+	* 
+	*/
+	function enableTesting(){
+		$this->testingMode = 1;
+	}
+	
+	/**
+	* Check Message Status for Settings page
+	* 
+	*/
+	function hasMessageStatus(){
+		return ( (isset($this->returnData['message_status']) && $this->returnData['message_status'] == 1) || !isset($this->returnData['message_status']) ) ? 1 : 0;
+	}
+	
+	/**
+	* Get Message Status for Settings page
+	* 
+	* @param echo or return
+	*/
+	function getMessageStatus ($echo = 0){
+		$val = ( (isset($this->returnData['message_status']) && $this->returnData['message_status'] == 1) || !isset($this->returnData['message_status']) ) ? 1 : 0;
+		
+		if ( $echo ) echo $val;
+		else return $val;
+	}
+	
   /**
   * Set Paths for JSON/Python Files on server
   * 
   */
   function setRealPaths (){
-    $this->students_schedule_json_path = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->students_schedule_json_path;
-    
-    $this->students_schedule_count_json_path = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->students_schedule_count_json_path;
-    
-    $this->teachers_schedule_json_path = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->teachers_schedule_json_path;
-    
-		$this->settings_json_path = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->settings_json_path;
+		$this->json_students_schedule['path'] = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->json_students_schedule['name'].'.json';
+		$this->json_students_schedule['url'] = URL.$this->json_main_folder_name.'/'.$this->json_students_schedule['name'].'.json';
 		
-    $this->python_script_path = realpath(dirname(dirname(__FILE__))).'/'.$this->python_main_folder_name.'/'.$this->python_script_path;
+		$this->json_students_schedule_count['path'] = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->json_students_schedule_count['name'].'.json';
+		$this->json_students_schedule_count['url'] = URL.$this->json_main_folder_name.'/'.$this->json_students_schedule_count['name'].'.json';
+		
+		$this->json_teachers_schedule['path'] = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->json_teachers_schedule['name'].'.json';
+		$this->json_teachers_schedule['url'] = URL.$this->json_main_folder_name.'/'.$this->json_teachers_schedule['name'].'.json';
+
+		$this->json_settings['path'] = realpath(dirname(dirname(dirname(dirname(__FILE__))))).'/'.$this->json_main_folder_name.'/'.$this->json_settings['name'].'.json';
+		$this->json_settings['url'] = URL.$this->json_main_folder_name.'/'.$this->json_settings['name'].'.json';
+		
+		$this->python_script_path = realpath(dirname(dirname(__FILE__))).'/'.$this->python_main_folder_name.'/'.$this->python_script_path;
+		
   }// end function
   
   function getDayStartingTime(){
@@ -163,16 +230,12 @@ class Scheduler
     return $this->settings['day_slot_time'];
   }
   
-  function getKid($id){
-    return ( isset($this->kids[$id]) ) ? $this->kids[$id] : '';
-  }
-  
   /**
   * Calculate slots' total count
   * 
   * @uses string $day_starting_time
   * @uses string $day_end_time
-  * @uses string $slot_time
+  * @uses string $day_slot_time_default
   */
   function calculateSlotTotalCount(){
     $this->slot_total_count = ($this->settings['day_ending_time'] - $this->settings['day_starting_time']) * 60 / $this->settings['day_slot_time'];
@@ -185,18 +248,16 @@ class Scheduler
   */
   function createEmptyTeachersSchedule (){
     // empty teachers schedule first
-    $this->teachers_schedule = array();
+    $this->teachers_schedule = [];
     
     for ($x = 1; $x <= $this->days_a_week; $x++ ){
-      $this->teachers_schedule['Days'][($x-1)] = array(
-        'Slots' => array()
-      );
+      $this->teachers_schedule['Days'][($x-1)] = [ 'Slots' => [] ];
       
       for ($y = 1; $y <= $this->slot_total_count; $y++){
-        $this->teachers_schedule['Days'][($x-1)]['Slots'][] = array(
+        $this->teachers_schedule['Days'][($x-1)]['Slots'][] = [
           'FullTime' => 0,
           'PartTime' => 0
-        );
+        ];
       }// end for y
       
     }// end for x
@@ -215,76 +276,32 @@ class Scheduler
   */
   function createEmptyStudentsSchedule (){
     for ($x = 1; $x <= $this->days_a_week; $x++ ){
-      $this->students_schedule_count['Days'][($x-1)] = array(
-        'Slots' => array()
-      );
-      
-      $this->students_schedule['Days'][($x-1)] = array(
-        'Slots' => array()
-      );
-      
-      for ($y = 1; $y <= $this->slot_total_count; $y++){
-        $this->students_schedule_count['Days'][($x-1)]['Slots'][] = array(
-          'NumberOfStudents' => 0
-        );
-        
-        $this->students_schedule['Days'][($x-1)]['Slots'][] = array(
-          'Students' => array()
-        );
-      }// end for y
-      
-    }// end for x
-    
-    // Save students schedule
-    $this->saveStudentsScheduleToJSON();
-    
-    // Save students schedule count
-    $this->saveStudentsScheduleCountToJSON();
-  }// end function
-  
-  /**
-  * Creates a random student schedule and its approprite student schedule count
-  * 
-  */
-  function createRandomStudentsSchedule (){
-    for ($x = 1; $x <= $this->days_a_week; $x++ ){
-      $this->students_schedule_count['Days'][($x-1)] = array(
-        'Slots' => array()
-      );
-      
-      $this->students_schedule['Days'][($x-1)] = array(
-        'Slots' => array()
-      );
-      
-      for ($y = 1; $y <= $this->slot_total_count; $y++){
-        $kidsInSlot = rand (10, 20);
-        
-        $this->students_schedule_count['Days'][($x-1)]['Slots'][] = array(
-          'NumberOfStudents' => $kidsInSlot
-        );
-        
-        $this->students_schedule['Days'][($x-1)]['Slots'][] = array(
-          'Students' => array()
-        );
-        
-        // shuffle kids
-        shuffle ($this->kids);
-        
-        // save kids in this slot
-        for ( $r = 1; $r <= $kidsInSlot; $r++ ){
-          if ( $this->getKid ($r) != '' ){
-            $this->students_schedule['Days'][($x-1)]['Slots'][($y-1)]['Students'][] = $this->getKid($r);
-          }
-        }// end for r
-        
-      }// end for y
-    }// end for x
-    
-    // Save students schedule
-    $this->saveStudentsScheduleToJSON();
-    
-    // Save students schedule count
-    $this->saveStudentsScheduleCountToJSON();
+			
+			$this->students_schedule_count['Days'][($x-1)] = [ 'Slots' => [] ];
+			$this->students_schedule['Days'][($x-1)] = [ 'Slots' => [] ];
+			
+			for ($y = 1; $y <= $this->slot_total_count; $y++){
+				// start hack
+				// explained in the saveNewStudentsSchedule() function
+				// hack for python slot times (based 30 mins)
+				// default to one times in case the slot time is flawed
+				$howManyTimes = ( ( $this->settings['day_slot_time'] / 30 ) > 0 ) ? intval($this->settings['day_slot_time'] / 30) : 1;
+				
+				for ( $t = 0; $t < $howManyTimes ; $t++){
+					$this->students_schedule_count['Days'][($x-1)]['Slots'][] = ['NumberOfStudents' => 0];
+				}
+				// end hack
+				
+				$this->students_schedule['Days'][($x-1)]['Slots'][] = [ 'Students' => [] ];
+			}// end for y
+			
+		}// end for x
+		
+		// Save students schedule
+		$this->saveStudentsScheduleToJSON();
+		
+		// Save students schedule count
+		$this->saveStudentsScheduleCountToJSON();
   }// end function
 	
 	/**
@@ -292,114 +309,165 @@ class Scheduler
 	* 
 	*/
 	function saveNewStudentsSchedule(){
-		$kids = array();
+		$students = [];
 		foreach ($_POST['slots'] as $k=>$v){
       $array = explode(',',$v);
 			if ( !empty ($array) && $array[0] != '' ){
 				foreach ($array as $val){
-					$kids[$k] = $array;
+					$students[$k] = $array;
 				}
 			}
 		}
 		
 		for ($x = 1; $x <= $this->days_a_week; $x++ ){
-      $this->students_schedule_count['Days'][($x-1)] = array(
-        'Slots' => array()
-      );
-      
-      $this->students_schedule['Days'][($x-1)] = array(
-        'Slots' => array()
-      );
-      
-      for ($y = 1; $y <= $this->slot_total_count; $y++){
-        $kidsInSlot = count ( $kids['x'.$x.'y'.$y] );
+			$this->students_schedule_count['Days'][($x-1)] = [ 'Slots' => [] ];
+			$this->students_schedule['Days'][($x-1)] = [ 'Slots' => [] ];
+			
+			for ($y = 1; $y <= $this->slot_total_count; $y++){
+				$kidsInSlot = count ( $students['x'.$x.'y'.$y] );
 				
-        
-        $this->students_schedule_count['Days'][($x-1)]['Slots'][] = array(
-          'NumberOfStudents' => $kidsInSlot
-        );
-        
-        $this->students_schedule['Days'][($x-1)]['Slots'][] = array(
-          'Students' => array()
-        );
-        
-        // save kids in this slot
-        for ( $r = 0; $r < $kidsInSlot; $r++ ){
-          if ( $this->getKid ( $kids['x'.$x.'y'.$y][$r] ) != '' ){
-            $this->students_schedule['Days'][($x-1)]['Slots'][($y-1)]['Students'][] = $this->getKid( $kids['x'.$x.'y'.$y][$r] );
-          }
-        }// end for r
-        
-      }// end for y
-    }// end for x
+				// hack for Python
+				// since the python script only accepts 30 minute slots
+				// we send him the data depending on the slot duration in minutes (with a base of 30)
+				// ex: if the slot time is 60mins, we send him each slot data twice
+				// if the slot time is 90mins, thrice
+				// if it's 30, once
+				/*
+				{
+					"NumberOfStudents": 15
+				},
+				{
+					"NumberOfStudents": 15
+				},
+				{
+					"NumberOfStudents": 20
+				},
+				{
+					"NumberOfStudents": 20
+				}
+				*/
+				
+				// default to one times in case the slot time is flawed
+				$howManyTimes = ( ( $this->settings['day_slot_time'] / 30 ) > 0 ) ? intval($this->settings['day_slot_time'] / 30) : 1;
+				for ( $t = 0; $t < $howManyTimes ; $t++){
+					$this->students_schedule_count['Days'][($x-1)]['Slots'][] = [ 'NumberOfStudents' => $kidsInSlot ];
+				}
+				$this->students_schedule['Days'][($x-1)]['Slots'][] = [ 'Students' => [] ];
+				
+				// save students in this slot
+				for ( $r = 0; $r < $kidsInSlot; $r++ ){
+					
+					$kidID = $students['x'.$x.'y'.$y][$r];
+					$student = $this->studentsClass->getStudentByID ( $kidID );
+					
+					if ( isset($student['id']) ){
+						$this->students_schedule['Days'][($x-1)]['Slots'][($y-1)]['Students'][] = $student;
+					}
+				}// end for r
+				
+			}// end for y
+		}// end for x
 		
-    // Save students schedule
-    $this->saveStudentsScheduleToJSON();
-    
-    // Save students schedule count
-    $this->saveStudentsScheduleCountToJSON();
+		// Save students schedule
+		$this->saveStudentsScheduleToJSON();
+		
+		// Save students schedule count
+		$this->saveStudentsScheduleCountToJSON();
 	}
 	
-  /**
-  * Get schedule students from json file
-  * ALSO calculates the schedule students count
-  * 
-  * @uses $students_schedule_json_path, $students_schedule_count_json_path
-  *
-  * @param string $input
-  * @return array|string array or empty string
-  */
-  function getStudentsSchedule(){
-    
-    // flag to force an empty student schedule count if the student schedule is false
-    $this->emptyScheduleFlag = false;
-    
-    // Try to read Students Schedule JSON File
-    $getJSONFileStudentsSchedule = $this->getJSONFile ( $this->students_schedule_json_path );
-    
-    // Students Schedule JSON not found or empty
-    if ( !$getJSONFileStudentsSchedule ){
-      // Students schedule not found or empty
-      // Create empty one
-      $this->createEmptyStudentsSchedule();
-      
-      // flag to create an empty student schedule count
-       $this->emptyScheduleFlag = true;
-    }// end if
-    
-    // Students Schedule JSON Found
-    else{
-      
-      // Save Students Schedule
-      $this->students_schedule = $getJSONFileStudentsSchedule;
-      
-      // Try to read the Students Schedule Count JSON file
-      $getJSONFileStudentsScheduleCount = $this->getJSONFile ( $this->students_schedule_count_json_path );
-      
-      // Students Schedule Count JSON Found
-      if ( $getJSONFileStudentsScheduleCount ){
-        
-        // if we just created an empty student schedule (check $this->emptyScheduleFlag above)
-        // we have to create an empty student schedule count
-        // even if there was a student schedule count JSON file with data in it (possibly from previous calculation where the student schedule JSON file being deleted or empty)
-        if (  $this->emptyScheduleFlag ) {
-          $this->students_schedule_count = json_encode ( $this->students_schedule_count );
-          $this->saveStudentsCountScheduleToJSON ();
-        }
-        else{
-          // get previously saved students schedule count
-          $this->students_schedule_count = $getJSONFileStudentsScheduleCount;
-        }
-      }
-      // Students Schedule JSON Count not found or empty
-      else{
-        // Create new one from Students Schedule
-        $this->students_schedule_count = json_encode ( $this->students_schedule_count );
-        $this->saveStudentsCountScheduleToJSON ();
-      }// end else
-    }// end else
-    
-  }// end function
+	/**
+	* Check schedule, if the students in it are not in our students.json file, delete them
+	* Recalculate the schedule after checking
+	* 
+	* @param json data from the students_schedule json file
+	*/
+	function getStudentsSchedule(){
+		// every student in the json file must have a valid ID and name that exist in the students.json file
+		// otherwise we remove the student from the file
+		// plus, if the file itself is not in the good format (slot total must be equal to the slot total which is calculated from the values in our settings page), we do not accept the file, we create an empty one to be used on the frontend
+		$bad_format = 0;
+		
+		// Try to read Students Schedule JSON File
+		$json_data = getJSONFile ( $this->json_students_schedule );
+		
+		$students_schedule_count = [];
+		$studentsDuplicateChecker = [];
+		
+		$howManyTimes = ( $this->settings['day_slot_time'] / 30 ) > 0 ? intval($this->settings['day_slot_time'] / 30) : 1;
+		
+		if ( isset ($json_data['Days']) && !empty ($json_data['Days']) ){
+			// these are used to know where to unset the students if they are not valid
+			$x = -1;
+			foreach ( $json_data['Days'] as $dayData ){
+				$y = -1;
+				$x++;
+				
+				$students_schedule_count['Days'][$x] = [ 'Slots' => [] ];
+				$slots = ( isset($dayData['Slots']) && count($dayData['Slots']) == $this->slot_total_count ) ? $dayData['Slots'] : '';
+				if ( $slots != '' ){
+					foreach ( $slots as $slot ){
+						$y++;
+						
+						if ( isset ($slot['Students']) ){
+							if ( !empty ($slot['Students']) ){
+								
+								$studentC = -1;
+								foreach ( $slot['Students'] as $student ){
+									$studentC++;
+									
+									if ( isset ($student['id']) && isset ($student['name']) && !in_array($student['id'],$studentsDuplicateChecker) ){
+										$checkStudent = $this->studentsClass->getStudentByID ( $student['id'] );
+										if ( !$checkStudent || ($checkStudent && $checkStudent['name'] != $student['name']) ){
+											unset ($json_data['Days'][$x]['Slots'][$y]['Students'][$studentC]);
+										}
+										else{
+											// student is valid
+											
+											// save him in the duplicates array
+											// to check in the loop - cant add the same student in the same slot
+											$studentsDuplicateChecker[] = $student['id'];
+											
+											$kidsInSlot = count ($slot['Students']);
+											for ( $t = 0; $t < $howManyTimes ; $t++){
+												$students_schedule_count['Days'][$x]['Slots'][] = [ 'NumberOfStudents' => $kidsInSlot ];
+											}
+										}
+									}
+									else {
+										unset ($json_data['Days'][$x]['Slots'][$y]['Students'][$studentC]);
+									}
+								}
+							}
+							else{
+								for ( $t = 0; $t < $howManyTimes; $t++){
+									$students_schedule_count['Days'][$x]['Slots'][] = [ 'NumberOfStudents' => 0 ];
+								}
+							}
+						}
+						else $bad_format = 1;
+					}
+				}
+				else $bad_format = 1;
+			}
+		}
+		else $bad_format = 1;
+		
+		// bad format on json file
+		// we don't accept it.
+		if ( $bad_format){
+			$this->createEmptyStudentsSchedule();
+		}
+		else{
+			$this->students_schedule = $json_data;
+			$this->students_schedule_count = $students_schedule_count;
+			
+			// Save students schedule
+			$this->saveStudentsScheduleToJSON();
+			
+			// Save students schedule count
+			$this->saveStudentsScheduleCountToJSON();
+		}
+	}
   
   /**
   * Use Python to calculate Teachers Schedule
@@ -425,8 +493,22 @@ class Scheduler
     // Send the Schedule Students Count as parameter to Python script
     $pythonParameter = json_encode($this->students_schedule_count);
     
+		// testing mode, output data to check
+		if ( $this->testingMode ){
+			echo "<b>Testing Mode</b><br><br>";
+			echo "<br><b>Parameters for Python: </b><br><br>";
+			print_r ($pythonParameter);
+		}
     // send command with params
     $python_output = exec("$this->python_exec_path $this->python_script_path");
+		
+		// testing mode, output data to check
+		if ( $this->testingMode )
+		{
+			echo "<br><br><b>Response from Python: </b><br><br>";
+			print_r ( json_decode($python_output, true) );
+			echo "<b>End Response from Python</b><br><br>";
+		}
     
     // Process python result
     if (isset($python_output) && !empty($python_output)){
@@ -451,7 +533,7 @@ class Scheduler
   */
   function saveStudentsScheduleToJSON(){
     try{
-      $fp = fopen( $this->students_schedule_json_path, 'w');
+      $fp = fopen( $this->json_students_schedule['path'], 'w');
       $res = fwrite ($fp, json_encode($this->students_schedule) );
       fclose ($fp);
     }
@@ -465,12 +547,12 @@ class Scheduler
   * @uses settings array
   */
   function saveSettingsToJSON(){
-    try{
-      $fp = fopen( $this->settings_json_path, 'w');
-      $res = fwrite ($fp, json_encode($this->settings) );
-      fclose ($fp);
-    }
-    catch (Exception $e) {}
+		try{
+			$fp = fopen( $this->json_settings['path'], 'w');
+			$res = fwrite ($fp, json_encode($this->settings) );
+			fclose ($fp);
+		}
+		catch (Exception $e) {}
   }// end function
   
   /**
@@ -481,7 +563,7 @@ class Scheduler
   */
   function saveStudentsScheduleCountToJSON(){
     try{
-      $fp = fopen( $this->students_schedule_count_json_path, 'w');
+      $fp = fopen( $this->json_students_schedule_count['path'], 'w');
       fwrite ($fp, json_encode($this->students_schedule_count) );
       fclose ($fp);
     }
@@ -496,7 +578,7 @@ class Scheduler
   */
   function saveTeachersScheduleToJSON(){
     try{
-      $fp = fopen( $this->teachers_schedule_json_path, 'w');
+      $fp = fopen( $this->json_teachers_schedule['path'], 'w');
       fwrite ($fp, $this->teachers_schedule_json );
       fclose ($fp);
     }
@@ -588,7 +670,7 @@ class Scheduler
                 }
               }
               else {
-                $this->students_schedule_xn_format['x'.$day_number.'y'.$slot_number]['Students'] = array();
+                $this->students_schedule_xn_format['x'.$day_number.'y'.$slot_number]['Students'] = [];
               }
             }
           }
@@ -602,7 +684,7 @@ class Scheduler
     if ( $bad_json_format ){
       for ($x=1; $x <= $this->days_a_week; $x++){
         for ($y=1; $y <= $this->slot_total_count; $y++){
-          $this->students_schedule_xn_format['x'.$x.'y'.$y]['Students'] = array();
+          $this->students_schedule_xn_format['x'.$x.'y'.$y]['Students'] = [];
         }
       }
       // resave the students schedule JSON file
@@ -611,40 +693,7 @@ class Scheduler
     }
     
   }// end function
-  
-  /**
-  * Read JSON File content
-  *
-  * @param string $json_file_path
-  * @return array|string array from JSON data or empty string
-  */
-  function getJSONFile ( $json_file_path ){
-    $output = '';
-    
-    clearstatcache();
-    $fp = '';
-    $created_file = 0;
-    // Open JSON File (create if not exists 'w')
-    if (!file_exists($json_file_path)) {
-      $fp = fopen( $json_file_path, 'w');
-      $created_file = 1;
-    }
-    // Get JSON file contents
-    $json_file_content = file_get_contents ($json_file_path);
-    if ( $created_file) 
-      fclose($fp);
-    
-    if ( isset ($json_file_content) && !empty ($json_file_content) ){
-      // fetch JSON content as array
-      $json_result = json_decode ($json_file_content, true);
-      if ( isset ($json_result) ){
-        $output = $json_result;
-      }
-    }
-    
-    return $output;
-  }// end function
-  
+
   /**
   * This main function will call other class functions 
   * to get the student schedule, the student schedule count
@@ -652,46 +701,37 @@ class Scheduler
   * 
   */
   function getSchedules (){
-    
-    // if user presses the Generate Schedule button in frontend
-    // we force recalculation of the teachers schedule via python
-    if ( isset ($_POST['random_schedule']) && $_POST['random_schedule'] == 1 ){
-      
-      // create new random students schedule alongwith the respective students schedule count
-      $this->createRandomStudentsSchedule();
+		
+		// if user presses the Generate Schedule button in frontend
+		// we force recalculation of the teachers schedule via python
+		if ( isset ($_POST['random_schedule']) && $_POST['random_schedule'] == 1 ){
+			
+			// create new random students schedule alongwith the respective students schedule count
+			// $this->createRandomStudentsSchedule();
 
-      // Calculate new teachers schedule via python script
-      $this->pythonDoTeachersSchedule();
-    }
+			// Calculate new teachers schedule via python script
+			// $this->pythonDoTeachersSchedule();
+		}
 		// if user presses the Save Schedule button in frontend
-    // we force recalculation of the teachers schedule via python
-    elseif ( isset ($_POST['save_schedule']) && $_POST['save_schedule'] == 1 ){
-      
-      // create new random students schedule alongwith the respective students schedule count
-      $this->saveNewStudentsSchedule();
-
-      // Calculate new teachers schedule via python script
-      $this->pythonDoTeachersSchedule();
-    }
-    else{
-      
-      // get existing students schedule and students schedule count data
-      $this->getStudentsSchedule();
-      
-      // Attempt to find existing teachers schedule
-      $json_result = $this->getJSONFile ( $this->teachers_schedule_json_path );
-      if ( $json_result ){
-        $this->teachers_schedule_json = json_encode($json_result);
-      }
-      else{
-        // no existing teachers schedule found
-        // Force a new calculation via python script
-        
-        if ( !$this->emptyScheduleFlag ) 
-          $this->pythonDoTeachersSchedule();
-      }
-    }
-    
+		// we force recalculation of the teachers schedule via python
+		elseif ( isset ($_POST['save_schedule']) && $_POST['save_schedule'] == 1 ){
+			// saave students schedule alongwith the respective students schedule count
+			$this->saveNewStudentsSchedule();
+		}
+		else{
+			// get existing students schedule and students schedule count data
+			$this->getStudentsSchedule();
+			
+			// Attempt to find existing teachers schedule
+			$json_result = getJSONFile ( $this->json_teachers_schedule );
+			if ( $json_result ){
+				$this->teachers_schedule_json = json_encode($json_result);
+			}
+		}
+		// always force new calculation
+		// Calculate new teachers schedule via python script
+		$this->pythonDoTeachersSchedule();
+		
   }// end function
   
   /**

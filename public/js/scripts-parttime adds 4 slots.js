@@ -37,7 +37,6 @@ $(function() {
 		tableSchedule = $("#table-schedule"),
 		tableRows = tableSchedule.find("tbody tr"),
 		currentColumnIndex = currentEntry.parents("td").index() + 1,
-		currentRowIndex = currentEntry.parents("tr").index() + 1,
 		currentColumnHead = tableSchedule.find("thead tr th:nth-child("+currentColumnIndex+")");
 		parttimeIDsArray = currentColumnHead.attr("data-parttime-ids").split(',');
 		
@@ -60,6 +59,7 @@ $(function() {
 				currentTD.attr('data-students-ids', ids.toString());
 				idsInputField.val ( ids.toString() );
 				student_listing_count.html( student_count-1);
+			//
 			
 			// remove the student entries box if no students are in it anymore
 			if ( ids.length == 0){
@@ -73,60 +73,7 @@ $(function() {
 		
 		// teacher case
 		else if (currentEntryType == 'teacher'){
-			if ( currentEntryTeacherMode == 'parttime'){
-				var teachersWithID = currentTD.find (".teacher-entry[data-id='"+currentEntryID+"']"),
-				teachersCount = '',
-				teachersStatsDiv = '',
-				teacherIDs = currentTD.attr('data-teachers-ids').split(',');
-				
-				// hack
-				// we only remove parttime from global parttime array if there are no parttime entrie with the same ID in the rest of the slots
-				var isThisIDInOtherSlots = 0,
-				rowIndex = 1;
-				$.each (tableRows, function(a,b){
-					var currentLoopTD = $(this).find("td:nth-child("+currentColumnIndex+")");
-					if ( rowIndex != currentRowIndex ){
-						var tempTeachersIDS = (currentLoopTD.attr('data-teachers-ids')) ? currentLoopTD.attr('data-teachers-ids').split(',') : '';
-						if ( tempTeachersIDS.length > 0 ){
-							if ( $.inArray( currentEntryID, tempTeachersIDS) != -1 ){
-								isThisIDInOtherSlots = 1;
-							}
-						}
-					}
-					rowIndex++;
-				});
-				// if this parttime ID is not found in other slots, we remove it from global parttime ids
-				if ( isThisIDInOtherSlots == 0 ){
-					parttimeIDsArray = jQuery.grep(parttimeIDsArray, function(value){
-						return value != currentEntryID;
-					});
-					currentColumnHead.attr("data-parttime-ids", parttimeIDsArray.toString());
-				}
-				
-				if ( $.inArray( currentEntryID, teacherIDs) != -1 ){
-					teachersStatsDiv = currentTD.find(".teachers-parttime-count");
-					teachersCount = parseInt(teachersStatsDiv.html());
-					teachersStatsDiv.html ( teachersCount + 1 );
-					
-					// update total teacher hour count
-					var totalHoursObj = $(".all-teachers .teacher-entry[data-id='" +currentEntryID + "'] .total-hours span"),
-					oldHours = parseInt(totalHoursObj.html());
-					totalHoursObj.html (oldHours-1);
-					
-					// remove the teacher entry
-					teachersWithID.remove();
-					
-					var teacherIDs = jQuery.grep(teacherIDs, function(value) {
-						return value != currentEntryID;
-					});
-					currentTD.attr('data-teachers-ids', teacherIDs.toString());
-					if ( teacherIDs.length == 0){
-						var teachersEntriesBox = currentTD.find(".teachers-entries");
-						teachersEntriesBox.remove();
-					}
-				}
-			}
-			else if ( currentEntryTeacherMode == 'fulltime' || currentEntryTeacherMode == 'vacation'){
+			if ( currentEntryTeacherMode == 'fulltime' || currentEntryTeacherMode == 'vacation' || currentEntryTeacherMode == 'parttime' ){
 
 				$.each (tableRows, function(a,b){
 					var currentLoopTD = $(this).find ("td:nth-child("+currentColumnIndex+")"),
@@ -157,18 +104,6 @@ $(function() {
 							var totalHoursObj = $(".all-teachers .teacher-entry[data-id='" +currentEntryID + "'] .total-hours span"),
 							oldHours = parseInt(totalHoursObj.html());
 							totalHoursObj.html (oldHours-1);
-							
-							// remove the teacher entry
-							teachersWithID.remove();
-							
-							var teacherIDs = jQuery.grep(teacherIDs, function(value) {
-								return value != currentEntryID;
-							});
-							currentLoopTD.attr('data-teachers-ids', teacherIDs.toString());
-							if ( teacherIDs.length == 0){
-								var teachersEntriesBox = currentLoopTD.find(".teachers-entries");
-								teachersEntriesBox.remove();
-							}
 						}
 					}
 					else{
@@ -178,17 +113,17 @@ $(function() {
 							oldHours = parseInt(totalHoursObj.html());
 							totalHoursObj.html (oldHours-1);
 						}
-						// remove the teacher entry
-						teachersWithID.remove();
-						
-						var teacherIDs = jQuery.grep(teacherIDs, function(value) {
-							return value != currentEntryID;
-						});
-						currentLoopTD.attr('data-teachers-ids', teacherIDs.toString());
-						if ( teacherIDs.length == 0){
-							var teachersEntriesBox = currentLoopTD.find(".teachers-entries");
-							teachersEntriesBox.remove();
-						}
+					}
+					// remove the teacher entry
+					teachersWithID.remove();
+					
+					var teacherIDs = jQuery.grep(teacherIDs, function(value) {
+						return value != currentEntryID;
+					});
+					currentLoopTD.attr('data-teachers-ids', teacherIDs.toString());
+					if ( teacherIDs.length == 0){
+						var teachersEntriesBox = currentLoopTD.find(".teachers-entries");
+						teachersEntriesBox.remove();
 					}
 				});
 			}
@@ -268,6 +203,7 @@ $(function() {
 								// update total hours count for original label
 								var totalHoursObj = $(".all-teachers .teacher-entry[data-id='" +currentEntryID + "'] .total-hours span"),
 								oldHours = parseInt(totalHoursObj.html());
+								console.log (oldHours);
 								totalHoursObj.html (oldHours+1);
 								// update teacher needed count
 								// no stats for vacation, so we check if this is a fulltime teacher
@@ -291,16 +227,16 @@ $(function() {
 						
 					// when added, push item to each slot in the entire day where the slot is dropped
 					var rowCounter = 0,
-					parttimeCounter = 1;
+					parttimeCounter = 4;
 					
 					// in parttime, we check all tds once for the ids (to prevent adding the same parttime teachers in other slots
-					// but we only add 1 entries (parttime) at a time
+					// but we only add 4 entries (parttime) at a time
 					var parttimeDuplicateCheck = 0;
 						
 					$.each (tableRows, function(a,b){
 						
 						rowCounter++;
-						// minimum 1 slots have to be available to add parttime student
+						// minimum 4 slots have to be available to add parttime student
 						if ( parttimeCounter > 0 && rowCounter >= droppableRowIndex && droppableRowIndex <= (totalSlots-3) )
 						{
 							parttimeCounter--;
@@ -312,7 +248,7 @@ $(function() {
 							// we check all IDs, special case for parttime teachers
 							parttimeIDsArray = parttimeIDs.split(',');
 							
-							if ( $.inArray (currentEntryID, teacher_ids_array) == -1  || parttimeDuplicateCheck == 1 )
+							if ( ( $.inArray( currentEntryID, parttimeIDsArray) == -1 && $.inArray (currentEntryID, teacher_ids_array) == -1 ) || parttimeDuplicateCheck == 1 )
 							{
 								parttimeDuplicateCheck = 1;
 								if ( entries_listing_div.length == 0 )
@@ -342,6 +278,7 @@ $(function() {
 								// update total hours count for original label
 								var totalHoursObj = $(".all-teachers .teacher-entry[data-id='" +currentEntryID + "'] .total-hours span"),
 								oldHours = parseInt(totalHoursObj.html());
+								console.log (oldHours);
 								totalHoursObj.html (oldHours+1);
 								
 								var fulltimeStatsDiv = currentLoopTD.find(".teachers-parttime-count"),

@@ -1,16 +1,21 @@
 <?php
-class Settings extends Controller
+class SettingsController extends Controller
 {
-  public function index()
-  {
-    $settingsModel = $this->loadModel('settingsModel');
-    $settings_data = $settingsModel->index();
-    
-		// for menus
-		$WRAPPER = 'settings';
+	private $model;
+	public $menuActive;
+	
+	public function SettingsController(){
+		$this->model = $this->loadModel('settingsModel');
+		$this->menuActive = 'settings';
+	}
+	
+	public function index()
+	{
+		$MAIN = $this->model->index();
 		
-    require 'core/views/_templates/header.php';
-    require 'core/views/settings/index.php';
-    require 'core/views/_templates/footer.php';
-  }
+		$WRAPPER = 'settings';
+		require 'core/views/_templates/header.php';
+		require 'core/views/settings/index.php';
+		require 'core/views/_templates/footer.php';
+	}
 }
