@@ -22,13 +22,13 @@ Settings<br>
 ````
 {
 "day_starting_time": "07:00",
-"day_ending_time": "19:00",
-"day_slot_time": 30,
-"max_kids_per_teacher": 6,
+"day_ending_time": "17:00",
+"day_length": 10,
+"day_slot_time": "60",
+"max_kids_per_teacher": 5,
 "fulltime_available_teachers": 69,
 "parttime_available_teachers": 69
-}
-````
+}````
 <br>
 <br>
 Student Schedule used to draw the table<br>
