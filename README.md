@@ -28,7 +28,8 @@ Settings<br>
 "max_kids_per_teacher": 5,
 "fulltime_available_teachers": 69,
 "parttime_available_teachers": 69
-}````
+}
+````
 <br>
 <br>
 Student Schedule used to draw the table<br>
