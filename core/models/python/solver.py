@@ -99,13 +99,12 @@ def aVectorForWorkHours(workHours):
 
 def fVectorForWorkHours(workHours, FULL, PART):
 	if workHours == 12:
-		f = [FULL , PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
+		f = [FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
 	if workHours == 10:
 		f = [FULL, PART, FULL, PART, FULL, PART, FULL, PART, FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
 	if workHours == 8:
 		f = [FULL, PART, PART, PART, PART, PART, PART, PART, PART, PART]
 	return f
-
 
 #Parse JSON settings from file
 # json_settings = open('json_settings')
@@ -113,13 +112,19 @@ json_settings = open('zejsonfiles/settings.json')
 settings_data = json.load(json_settings)
 json_settings.close()
 
+# print json.dumps(settings_data)
+# sys.exit()
+
 #Constants
 FULL = 100
 PART = 50
 fullTimersAvailable = settings_data["fulltime_available_teachers"]
 partTimersAvailable = settings_data["parttime_available_teachers"]
-studentsPerTeacher = settings_data["max_kids_per_teacher"]
+studentsPerTeacher = settings_data["max_students_per_teacher"]
 workHours = settings_data["day_length"]
+
+# print (studentsPerTeacher)
+# sys.exit()
 
 #Objective function
 f = fVectorForWorkHours(workHours, FULL, PART)
@@ -142,9 +147,16 @@ json_data = open('zejsonfiles/students_schedule_count_for_python.json')
 data = json.load(json_data)
 json_data.close()
 
+# print json.dumps(data)
+# sys.exit()
+
 parsedDays = data["Days"]
 numberOfDays = len(parsedDays)
 daysArray = [None] * numberOfDays
+# print json.dumps(parsedDays)
+# sys.exit()
+# print numberOfDays
+# sys.exit()
 
 #Iterate and solve for each Day
 for day in range(0,numberOfDays):
@@ -159,17 +171,17 @@ for day in range(0,numberOfDays):
 		
 	b[len(A) -2] = fullTimersAvailable
 	b[len(A) -1] = partTimersAvailable
-
+	
 	#Solve model
-	lp = lp_maker(f, A, b, signs , None, None, None, 1, 0)
+	lp = lp_maker(f, A, b, signs, None, None, None, 1, 0)
 	solvestat = lpsolve('solve', lp)
 	obj = lpsolve('get_objective', lp)
 	x = lpsolve('get_variables', lp)[0]
 	# print "x = " + str(x) 
+	# sys.exit()
 	lpsolve('delete_lp', lp)
-
-
-# Create full/part time array results			
+	
+# Create full/part time array results
 	slotsArray = [None] * int(len(A)-2)
 
 	for i in range(int(len(A)-2)):

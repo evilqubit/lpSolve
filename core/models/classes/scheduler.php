@@ -31,7 +31,7 @@ class Scheduler
 	public $day_starting_time_default = '07:00'; // 7 AM
 	public $day_ending_time_default = '17:00'; // 5 PM
 	public $day_slot_time_default = 30; // 30 mins
-	public $max_kids_per_teacher_default = 5;
+	public $max_students_per_teacher_default = 5;
 	public $fulltime_available_teachers_default = 69;
 	public $parttime_available_teachers_default = 69;
 	public $slot_total_count = '';
@@ -95,7 +95,7 @@ class Scheduler
 			// this setting must be 30, 60, 90, 120, etc...
 			$this->settings['day_slot_time'] = ( isset ($settings_json['day_slot_time']) && !empty ($settings_json['day_slot_time'] ) && is_numeric ($settings_json['day_slot_time']) && is_int( $settings_json['day_slot_time']/30 ) && $settings_json['day_slot_time'] > 0 ) ? $settings_json['day_slot_time'] : $this->day_slot_time_default;
 			
-			$this->settings['max_kids_per_teacher'] = ( isset ($settings_json['max_kids_per_teacher']) && !empty ($settings_json['max_kids_per_teacher'] ) && is_numeric ($settings_json['max_kids_per_teacher']) && $settings_json['max_kids_per_teacher'] > 0 ) ? intval($settings_json['max_kids_per_teacher']) : $this->max_kids_per_teacher_default;
+			$this->settings['max_students_per_teacher'] = ( isset ($settings_json['max_students_per_teacher']) && !empty ($settings_json['max_students_per_teacher'] ) && is_numeric ($settings_json['max_students_per_teacher']) && $settings_json['max_students_per_teacher'] > 0 ) ? intval($settings_json['max_students_per_teacher']) : $this->max_students_per_teacher_default;
 			
 			$this->settings['fulltime_available_teachers'] =  ( $settings_json['fulltime_available_teachers'] && is_numeric ($settings_json['fulltime_available_teachers']) && $settings_json['fulltime_available_teachers'] > 0 ) ? intval($settings_json['fulltime_available_teachers']) : $this->fulltime_available_teachers_default;
 			
@@ -106,7 +106,7 @@ class Scheduler
 			$this->settings['day_starting_time'] = $this->day_starting_time_default;
 			$this->settings['day_ending_time'] = $this->day_ending_time_default;
 			$this->settings['day_slot_time'] = $this->day_slot_time_default;
-			$this->settings['max_kids_per_teacher'] = $this->max_kids_per_teacher_default;
+			$this->settings['max_students_per_teacher'] = $this->max_students_per_teacher_default;
 			$this->settings['fulltime_available_teachers'] = $this->fulltime_available_teachers_default;
 			$this->settings['parttime_available_teachers'] = $this->parttime_available_teachers_default;
 		}
@@ -156,7 +156,7 @@ class Scheduler
 				return '';
 			}
 			
-			$this->settings['max_kids_per_teacher'] = ( isset ($_POST['max_kids_per_teacher']) && !empty ($_POST['max_kids_per_teacher'] ) && is_numeric ($_POST['max_kids_per_teacher']) && $_POST['max_kids_per_teacher'] > 0 ) ? intval($_POST['max_kids_per_teacher']) : $this->max_kids_per_teacher_default;
+			$this->settings['max_students_per_teacher'] = ( isset ($_POST['max_students_per_teacher']) && !empty ($_POST['max_students_per_teacher'] ) && is_numeric ($_POST['max_students_per_teacher']) && $_POST['max_students_per_teacher'] > 0 ) ? intval($_POST['max_students_per_teacher']) : $this->max_students_per_teacher_default;
 			
 			$this->settings['fulltime_available_teachers'] = ( isset ($_POST['fulltime_available_teachers']) && !empty ($_POST['fulltime_available_teachers'] ) && is_numeric ($_POST['fulltime_available_teachers']) && $_POST['fulltime_available_teachers'] > 0 ) ? intval($_POST['fulltime_available_teachers']) : $this->fulltime_available_teachers_default;
 			
@@ -412,6 +412,7 @@ class Scheduler
 							if ( !empty ($slot['Students']) ){
 								
 								$studentC = -1;
+								$validStudents = 0;
 								foreach ( $slot['Students'] as $student ){
 									$studentC++;
 									
@@ -422,20 +423,18 @@ class Scheduler
 										}
 										else{
 											// student is valid
-											
+											$validStudents++;
 											// save him in the duplicates array
 											// to check in the loop - cant add the same student in the same slot
 											$studentsDuplicateChecker[] = $student['id'];
-											
-											$kidsInSlot = count ($slot['Students']);
-											for ( $t = 0; $t < $howManyTimes ; $t++){
-												$students_schedule_count['Days'][$x]['Slots'][] = [ 'NumberOfStudents' => $kidsInSlot ];
-											}
 										}
 									}
 									else {
 										unset ($json_data['Days'][$x]['Slots'][$y]['Students'][$studentC]);
 									}
+								}
+								for ( $t = 0; $t < $howManyTimes ; $t++){
+									$students_schedule_count['Days'][$x]['Slots'][] = [ 'NumberOfStudents' => $validStudents ];
 								}
 							}
 							else{
@@ -505,9 +504,11 @@ class Scheduler
 		// testing mode, output data to check
 		if ( $this->testingMode )
 		{
+			echo "<br><br><b>Print dumps from Python: </b><br><br>";
+			var_dump ( $python_output );
 			echo "<br><br><b>Response from Python: </b><br><br>";
-			print_r ( json_decode($python_output, true) );
-			echo "<b>End Response from Python</b><br><br>";
+			// print_r ( json_decode($python_output, true) );
+			// echo "<b>End Response from Python</b><br><br>";
 		}
     
     // Process python result

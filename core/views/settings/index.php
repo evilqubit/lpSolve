@@ -36,8 +36,8 @@
 						<input class="form-control" name="day_slot_time" type="text" value="<?php echo $MAIN->settings['day_slot_time'];?>">
 					</div>
 					<div class="form-group">
-						<label>Max kids per teacher</label>
-						<input class="form-control" name="max_kids_per_teacher" type="text" value="<?php echo $MAIN->settings['max_kids_per_teacher'];?>">
+						<label>Max students per teacher</label>
+						<input class="form-control" name="max_students_per_teacher" type="text" value="<?php echo $MAIN->settings['max_students_per_teacher'];?>">
 					</div>
 					<div class="form-group">
 						<label>Fulltime available teachers</label>
