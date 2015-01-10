@@ -26,6 +26,7 @@ class Scheduler
 	
 	private $python_exec_path = 'python';
 	private $python_script_path = 'solver.py';
+	private $python_script_debug_path = 'solver-debug.py';
 
 	public $days_a_week = 5;
 	public $day_starting_time_default = '07:00'; // 7 AM
@@ -48,6 +49,13 @@ class Scheduler
   }// end constructor
 	
 	function kickstart(){
+		
+		if ( $_GET['debug'] == 1 ){
+			$python_output = exec("$this->python_exec_path $this->python_script_debug_path");
+			var_dump ( $python_output );
+			exit;
+		}
+		
 		// Calculate slots' total count
 		$this->calculateSlotTotalCount();
 		
@@ -215,6 +223,8 @@ class Scheduler
 		$this->json_settings['url'] = URL.$this->json_main_folder_name.'/'.$this->json_settings['name'].'.json';
 		
 		$this->python_script_path = realpath(dirname(dirname(__FILE__))).'/'.$this->python_main_folder_name.'/'.$this->python_script_path;
+		
+		$this->python_script_debug_path = realpath(dirname(dirname(__FILE__))).'/'.$this->python_main_folder_name.'/'.$this->python_script_debug_path;
 		
   }// end function
   
@@ -391,7 +401,6 @@ class Scheduler
 		$json_data = getJSONFile ( $this->json_students_schedule );
 		
 		$students_schedule_count = [];
-		$studentsDuplicateChecker = [];
 		
 		$howManyTimes = ( $this->settings['day_slot_time'] / 30 ) > 0 ? intval($this->settings['day_slot_time'] / 30) : 1;
 		
@@ -406,6 +415,7 @@ class Scheduler
 				$slots = ( isset($dayData['Slots']) && count($dayData['Slots']) == $this->slot_total_count ) ? $dayData['Slots'] : '';
 				if ( $slots != '' ){
 					foreach ( $slots as $slot ){
+						$studentsDuplicateChecker = [];
 						$y++;
 						
 						if ( isset ($slot['Students']) ){
