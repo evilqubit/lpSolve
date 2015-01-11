@@ -174,20 +174,16 @@ for day in range(0,numberOfDays):
 	slotsArray = [None] * int(len(A)-2)
 
 	for i in range(int(len(A)-2)):
+		# A[i] is a row of the A array -> an array of 1s, 0s
 		slot = A[i]
 		fullCounter = 0 
 		partCounter = 0
 		for j in range(len(slot)):
 			if slot[j] == 1:
 				if f[j] == FULL:
+					# if result is inferior to 
 					if x[j] < studentsPerTeacher:
-						# fullCounter = math.floor(slots[j]["NumberOfStudents"] / studentsPerTeacher)
-						# print "\n"
-						# print "WRONG AT: " + str(j)
-						# print "Number of students: " + str(slots[j]["NumberOfStudents"])
-						# print "x[j] : " + str(x[j])
-						# print "suggested fix: " + str(math.ceil( float(slots[j]["NumberOfStudents"]) / float(studentsPerTeacher) ))
-						fullCounter += math.ceil( float(slots[j]["NumberOfStudents"]) / float(studentsPerTeacher) )
+						fullCounter = math.ceil(float(slots[i]["NumberOfStudents"]) / float(studentsPerTeacher) )
 					else:
 						fullCounter += x[j]	
 				else:
